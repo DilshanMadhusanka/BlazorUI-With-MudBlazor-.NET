@@ -1,60 +1,54 @@
 ﻿@page "/"
 
 
+
 <!--Slide show Section-->
 
-
-<MudCarousel Class="mud-width-full" Style="height:800px;" TData="object" AutoCycle="false">
-    <MudCarouselItem Color="@Color.Primary" Transition="Transition.Slide">
-        <div class="d-flex" style="height:100%">
-            <MudImg Class="mx-auto my-auto" Src="Assets/Images/2.png" Alt="Image 1" />
-        </div>
-    </MudCarouselItem>
-
-    <MudCarouselItem Color="@Color.Secondary" Transition="Transition.Slide">
-        <div class="d-flex" style="height:100%">
-            <MudImg Class="mx-auto my-auto" Src="Assets/Images/2.png" Alt="Image 2" />
-        </div>
-    </MudCarouselItem>
-
-    <MudCarouselItem Color="@Color.Secondary" Transition="Transition.Slide">
-        <div class="d-flex" style="height:100%">
-            <MudImg Class="mx-auto my-auto" Src="Assets/Images/3.png" Alt="Image 3" />
-        </div>
-    </MudCarouselItem>
+<MudCarousel Class="mud-width-full" Style="height:800px;" TData="string" AutoCycle="true" Interval="5000">
+    @foreach (var imageUrl in ImageUrls)
+    {
+        <MudCarouselItem Transition="Transition.Slide">
+            <div class="d-flex" style="height:100%; padding: 0; margin: 0;">
+                <img src="@imageUrl" style="width: 100%; height: auto;" />
+            </div>
+        </MudCarouselItem>
+    }
 </MudCarousel>
 
+@code {
+    private List<string> ImageUrls = new List<string>
+    {
+        "./Assets/1.png",
+        "./Assets/2.png",
+        "./Assets/3.png",
+        "./Assets/4.png",
+        "./Assets/5.png",
+    };
+}
 
 
 
+
+ 
 
 <div style="height: 90px;"></div>
 
-<!-- About Section-->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-<style>
-    .animate__animated {
-        animation-duration: 1s;
-    }
 
-    .animate__delay-1s {
-        animation-delay: 1s;
-    }
-</style>
+<!-- About Section -->
+<link rel="stylesheet" href="HomePage.razor\HomePage.razor.css" />
+
 
 <MudContainer class="about-container">
     <MudGrid>
         <!-- Image Column with Animation -->
         <MudItem xs="12" md="6" class="d-flex justify-content-center align-items-center animate__animated animate__fadeInLeft">
-            <!-- Replace 'your-image-path' with the actual path to your image -->
-            <img src="https://th.bing.com/th/id/R.e173002517a89d4573afc61652035b71?rik=BmSxvq%2bpeOWT8Q&riu=http%3a%2f%2fimage.shutterstock.com%2fz%2fstock-photo-portrait-of-an-engineer-at-work-133724657.jpg&ehk=fs%2bCLXD90wbKsjRWgaXWtHXCfMrap6CU55FiAiXWi8A%3d&risl=&pid=ImgRaw&r=0"
-                 style="max-width: 100%; height: auto; max-height: 400px;" alt="About Us Image" class="about-image animate__animated animate__fadeInLeft" />
+            <img src="./Assets/1.png"/>
         </MudItem>
 
         <!-- Text Column with Animation -->
         <MudItem xs="12" md="6" class="d-flex align-items-center animate__animated animate__fadeInRight animate__delay-1s">
-            <div class="about-content" style="margin-top: 50px;">
-                <h4 class="mb-4" style="font-size: 1.5rem;">About Us</h4>
+            <div class="about-content">
+                <h4>About Us</h4>
                 <p>
                     The Faculty of Engineering of University of Ruhuna was established on 1st July 1999 at Hapugala, Galle.
                     First batch of students was admitted on 27th March 2000.
@@ -80,7 +74,8 @@
 
 
 
-<div style="height: 50px;"></div>
+<MudSpacer  />
+
 
 
 <!-- Card Section-->
@@ -138,3 +133,4 @@
 </MudGrid>
 
 <div style="height: 100px;"></div>
+

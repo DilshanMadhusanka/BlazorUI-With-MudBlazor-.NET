@@ -1,20 +1,32 @@
-﻿
-
-<MudPaper Elevation="25">
-    <MudToolBar>
-        <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Class="mr-5" />
-        <MudIconButton Icon="@Icons.Material.Outlined.Add" />
-        <MudIconButton Icon="@Icons.Material.Outlined.Edit" />
-        <MudIconButton Icon="@Icons.Material.Outlined.Remove" Color="Color.Inherit" />
-        <MudIconButton Icon="@Icons.Material.Outlined.Settings" Color="Color.Inherit" />
-        <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Outlined.Notifications" />
-        <MudIconButton Icon="@Icons.Material.Outlined.PushPin" />
-        <MudIconButton Icon="@Icons.Material.Outlined.PeopleAlt" />
-        <MudIconButton Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" />
-    </MudToolBar>
-</MudPaper>
+﻿<MudAppBar Fixed="true" Dense="true" Style="background-color: rgba(0, 0, 0, 0.5); width: 100%">
+    <MudToolbar>
+        <MudItem Justify="Justify.flexEnd" Style="width: 100%">
+            <MudButton @onclick="() => NavigateToHome()" Style="color: white">Home</MudButton>
+            <MudButton @onclick="() => NavigateToAbout()" Style="color: white">About</MudButton>
+            <MudButton @onclick="() => NavigateToLogin()" Variant="Variant.Filled" Color="Color.Primary">Login</MudButton>
+        </MudItem>
+    </MudToolbar>
+</MudAppBar>
 
 @code {
+    private void NavigateToHome()
+    {
+        // Navigate to the Home page
+        NavigationManager.NavigateTo("/");
+    }
 
+    private void NavigateToAbout()
+    {
+        // Navigate to the About page
+        NavigationManager.NavigateTo("/about");
+    }
+
+    private void NavigateToLogin()
+    {
+        // Navigate to the Login page or perform login action
+        // You need to define the login logic or navigate to the login page here
+    }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
 }
