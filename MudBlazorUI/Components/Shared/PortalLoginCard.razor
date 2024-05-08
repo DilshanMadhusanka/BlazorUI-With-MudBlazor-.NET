@@ -1,0 +1,28 @@
+﻿<MudCard Class="custom-card" style="width: 230px">
+    <MudCardMedia Image="@Image" Height="250" style="width: 100%;" />
+    <MudCardContent>
+        <MudText Typo="Typo.h6">@Title</MudText>
+            <MudText Typo="Typo.body2">@Content1</MudText>
+            <MudText Typo="Typo.body2">@Content2</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Text" Color="Color.Primary">@Button1Text</MudButton>
+        </MudCardActions>
+    </MudCard>
+
+    @code {
+    [Parameter]
+    public string Image { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Content1 { get; set; }
+
+    [Parameter]
+    public string Content2 { get; set; }
+
+    [Parameter]
+    public string Button1Text { get; set; }
+}

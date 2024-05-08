@@ -1,5 +1,7 @@
-﻿@page "/"
+﻿
 
+@page "/"
+@using MudBlazorUI.Components.Shared
 
 
 <!--Slide show Section-->
@@ -16,8 +18,86 @@
 </MudCarousel>
 
 
-<!-- About Section -->
 
+<!-- About Section -->
+<MudContainer style="margin-top: 150px; margin-bottom: 150px;">
+    <MudGrid>
+        <!-- Left Column: Image -->
+        <MudItem xs="12" md="6">
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <img src="./Assets/4.png" alt="About Us Image" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);" />
+            </div>
+        </MudItem>
+
+        <!-- Right Column: About Us Content -->
+        <MudItem xs="12" md="6">
+            <div style="padding: 20px;">
+                <h2 style="font-size: 24px; margin-bottom: 10px;">About Us</h2>
+                <p style="font-size: 16px; line-height: 1.6; margin-bottom: 15px;">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et urna sit amet quam vehicula volutpat. Integer vel nisi sapien.
+                    Duis nec risus vel mauris lacinia vestibulum. Nam volutpat nulla in eros consequat, vitae tincidunt tortor convallis.
+                </p>
+                <p style="font-size: 16px; line-height: 1.6; margin-bottom: 15px;">
+                    Mauris interdum semper metus, at facilisis ex tincidunt sit amet. Vestibulum nec ipsum tincidunt, laoreet nisi ac, consequat felis.
+                    Phasellus vel lectus vitae tortor placerat lacinia. Curabitur fermentum interdum urna nec ullamcorper.
+                </p>
+                <!-- Clickable Button -->
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" href="https://example.com" target="_blank">Visit Website</MudButton>
+            </div>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+
+
+
+
+
+
+<!-- Card Section-->
+
+<MudGrid Class="d-flex justify-center mt-4 mb-4 ">
+    <MudItem Class="mt-4 mb-4 animate__animated animate__fadeInLeft">
+        <PortalLoginCard Image="./Assets/4.png"
+                      Title="Admin Portal"
+                      Content1="Paint found on a stone house door. "
+                      Content2="This photo was taken in a small village in Istra Croatia."
+                      Button1Text="Share"
+                       />
+    </MudItem>
+    <MudItem Class="mt-4 mb-4">
+        <PortalLoginCard Image="./Assets/2.png"
+                      Title="Student Portal"
+                      Content1="Paint found on a stone house door."
+                      Content2="This photo was taken in a small village in Istra Croatia."
+                      Button1Text="Share"
+                 />
+    </MudItem>
+    <MudItem Class="mt-4 mb-4">
+        <PortalLoginCard Image="./Assets/1.png"
+                      Title="Department Portal"
+                      Content1="Paint found on a stone house door."
+                      Content2="This photo was taken in a small village in Istra Croatia."
+                      Button1Text="Share"
+                      />
+    </MudItem>
+    <MudItem Class="mt-4 mb-4">
+        <PortalLoginCard Image="./Assets/3.png"
+                         Title="Acedamic Portal"
+                         Content1="Paint found on a stone house door."
+                         Content2="This photo was taken in a small village in Istra Croatia."
+                         Button1Text="Share"
+                         />
+    </MudItem>
+    <MudItem Class="mt-4 mb-4">
+        <PortalLoginCard Image="./Assets/5.png"
+                         Title="Staff Portal"
+                         Content1="Paint found on a stone house door."
+                         Content2="This photo was taken in a small village in Istra Croatia."
+                         Button1Text="Share"
+                         />
+    </MudItem>
+</MudGrid>
 
 
 
@@ -34,112 +114,3 @@
         "./Assets/5.png",
     };
 }
-
-
-
-
- 
-
-<div style="height: 90px;"></div>
-
-
-<!-- About Section -->
-<link rel="stylesheet" href="HomePage.razor\HomePage.razor.css" />
-
-
-<MudContainer class="about-container">
-    <MudGrid>
-        <!-- Image Column with Animation -->
-        <MudItem xs="12" md="6" class="d-flex justify-content-center align-items-center animate__animated animate__fadeInLeft">
-            <img src="./Assets/1.png"/>
-        </MudItem>
-
-        <!-- Text Column with Animation -->
-        <MudItem xs="12" md="6" class="d-flex align-items-center animate__animated animate__fadeInRight animate__delay-1s">
-            <div class="about-content">
-                <h4>About Us</h4>
-                <p>
-                    The Faculty of Engineering of University of Ruhuna was established on 1st July 1999 at Hapugala, Galle.
-                    First batch of students was admitted on 27th March 2000.
-                    Admission to the Faculty of Engineering, University of Ruhuna, is subject to the University Grants Commission policy on university admissions.
-                    The present annual intake to the Faculty is 530.
-                    The Faculty of Engineering offers full-time courses leading to the Degree of Bachelor of the Science of Engineering Honors (B.Sc.Eng.Hons.),
-                    which is accredited by the Institution of Engineers, Sri Lanka (IESL).
-                </p>
-                <p>Four academic departments in this Faculty are:</p>
-                <ul>
-                    <li>Department 1</li>
-                    <li>Department 2</li>
-                    <li>Department 3</li>
-                    <li>Department 4</li>
-                </ul>
-                <!-- Button to Link to Other Website -->
-                <a href="https://example.com" target="_blank" class="btn">Visit Website</a>
-            </div>
-        </MudItem>
-    </MudGrid>
-</MudContainer>
-
-
-
-
-<MudSpacer  />
-
-
-
-<!-- Card Section-->
-
-
-<MudGrid Class="d-flex justify-center mt-4 mb-4">
-    <MudItem Class="mt-4 mb-4 animate__animated animate__fadeInLeft">
-        <MudCard>
-            <MudCardMedia Image="https://th.bing.com/th/id/OIP.lYq9y4B2KzZkYVSwsalS5wHaE8?w=3600&h=2400&rs=1&pid=ImgDetMain"
-                          Height="400"
-                          style="width: 100%;" />
-            <MudCardContent>
-                <MudText Typo="Typo.h5">Old Paint</MudText>
-                <MudText Typo="Typo.body2">Paint found on a stone house door.</MudText>
-                <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <MudButton Variant="Variant.Text" Color="Color.Primary">Share</MudButton>
-                <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
-            </MudCardActions>
-        </MudCard>
-    </MudItem>
-    <MudItem Class="mt-4 mb-4">
-        <MudCard>
-            <MudCardMedia Image="https://www.pixelstalk.net/wp-content/uploads/2016/06/Jungle-Photos-HD.jpg"
-                          Height="400"
-                          style="width: 100%;" />
-            <MudCardContent>
-                <MudText Typo="Typo.h5">Old Paint</MudText>
-                <MudText Typo="Typo.body2">paint found on a stone house door.</MudText>
-                <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <MudButton Variant="Variant.Text" Color="Color.Primary">Share</MudButton>
-                <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
-            </MudCardActions>
-        </MudCard>
-    </MudItem>
-    <MudItem Class="mt-4 mb-4">
-        <MudCard>
-            <MudCardMedia Image="https://th.bing.com/th/id/R.bce8a2d6062252144cf6ee98f65680a5?rik=SMCp7%2fS76m2f5g&riu=http%3a%2f%2fwallup.net%2fwp-content%2fuploads%2f2016%2f02%2f18%2f258259-nature-trees-forest-leaves-lianas-mist-moss-path-plants-ferns-rainforest-jungles.jpg&ehk=j4CNY3obG1NBJmFoLNg%2fNixMyU1W2JSsQLF%2b7iUNdMw%3d&risl=&pid=ImgRaw&r=0"
-                          Height="400"
-                          style="width: 100%;" />
-            <MudCardContent>
-                <MudText Typo="Typo.h5">Old Paint</MudText>
-                <MudText Typo="Typo.body2">paint found on a stone house door.</MudText>
-                <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <MudButton Variant="Variant.Text" Color="Color.Primary">Share</MudButton>
-                <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
-            </MudCardActions>
-        </MudCard>
-    </MudItem>
-</MudGrid>
-
-<div style="height: 100px;"></div>
-
