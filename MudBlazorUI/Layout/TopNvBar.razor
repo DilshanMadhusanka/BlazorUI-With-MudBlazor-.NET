@@ -1,34 +1,34 @@
 ﻿
 
 <MudAppBar Fixed="true" Dense="true" Style="background-color: rgba(0, 0, 0, 0.5); width: 100%">
-    <MudToolbar>
+    <MudContainer>
         <MudItem Justify="Justify.flexEnd" Style="width: 100%">
             <MudButton @onclick="() => NavigateToHome()" Style="color: white">Home</MudButton>
             <MudButton @onclick="() => NavigateToAbout()" Style="color: white">About</MudButton>
             <MudButton @onclick="() => NavigateToLogin()" Variant="Variant.Filled" Color="Color.Primary">Login</MudButton>
         </MudItem>
-    </MudToolbar>
+    </MudContainer>
 </MudAppBar>
 
 @code {
     private void NavigateToHome()
     {
         // Navigate to the Home page
-        NavigationManager.NavigateTo("/");
+       NavigationManager.NavigateTo("/");
     }
 
     private void NavigateToAbout()
     {
         // Navigate to the About page
-        NavigationManager.NavigateTo("/about");
+       NavigationManager.NavigateTo("/about");
     }
 
     private void NavigateToLogin()
     {
         // Navigate to the Login page or perform login action
-        // You need to define the login logic or navigate to the login page here
+       // You need to define the login logic or navigate to the login page here
     }
 
-    [Inject]
+   [Inject]
     private NavigationManager NavigationManager { get; set; }
 }

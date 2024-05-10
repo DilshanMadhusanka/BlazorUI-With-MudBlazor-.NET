@@ -1,11 +1,12 @@
 @page "/login"
+@layout NoNavLayout
 @using MudBlazor.Components
 
 <style>
-     .background-container {
+    .background-container {
         background-image: url('./Assets/3.png');
         background-size: cover;
-        height:100vh;
+        height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -13,21 +14,20 @@
 </style>
 
 
-    <div class="background-container">
-<MudPaper Elevation="4"  Style="background-color: rgba(255, 255, 255, 0.8); padding:40px;">
+<div class="background-container">
+    <MudPaper Elevation="4" Style="background-color: rgba(255, 255, 255, 0.8); padding:40px;">
 
         <MudForm>
             <MudTextField T="string" Label="Username" />
-            <MudTextField T="string" Label="Password" InputType="InputType.Password" Style="margin-bottom: 20px;"/>
-            <span style="margin-bottom:40px;">Forgotten Your Username or password?</span><br/>
-            <input type="checkbox"/><span style="margin-bottom: 20px;">Remember Username</span><br/>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" >Sign In</MudButton>
+            <MudTextField T="string" Label="Password" InputType="InputType.Password" Style="margin-bottom: 20px;" />
+            <span style="margin-bottom:40px;">Forgotten Your Username or password?</span><br />
+            <input type="checkbox" /><span style="margin-bottom: 20px;">Remember Username</span><br />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Sign In</MudButton>
         </MudForm>
-        
-   
+
+
 
     </MudPaper>
-    </div>
-    
-    
+</div>
+
 
