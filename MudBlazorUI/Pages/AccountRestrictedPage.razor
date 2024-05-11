@@ -1,0 +1,73 @@
+﻿@page "/accountrestricted"
+
+@inject NavigationManager NavigationManager
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BodyS:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+<MyMudProviders />
+
+<PageTitle>Account Restricted</PageTitle>
+
+
+<MudPaper Class=" pa-20" Style="@($"color:{Colors.Purple.Darken3}; font-size: 13px; display:flex; justify-content: center; align-items: center; margin-top:25px; margin-bottom:40px; border: none")">
+    <div style="width: 416px;background: #F3F1F1; height: 300px; position: relative; border-radius: 8px">
+        <div style="display: flex; justify-content: center; align-items: center; margin-top:15px" >
+            <span style="font-family: 'Material Symbols Outlined'; font-size: 40px; color: #FF1414;">&#xe99a;</span>
+        </div>
+            <div style="left: 93px; top: 83px;justify-content: center; position: absolute; color: #FF1414; font-size: 25px; font-family: Roboto Serif; font-weight: 700; line-height: 32px; word-wrap: break-word">
+                Account Restricted
+            </div>
+            <div style="width: 273px; left: 71px; top: 114px; position: absolute; text-align: center; color: rgba(0, 0, 0, 0.53); font-size: 13px; font-family: Roboto Serif; font-weight: 400; line-height: 24px; word-wrap: break-word">
+                You’re temporarily restricted from performing certain actions on the system
+            </div>
+            <MudCardActions style="position: absolute; bottom: 25px; width: 100%; display: flex; justify-content: center;" Class="mt-n5">
+                <MudButton @onclick="RequestAccess" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" Class="mybutton" Rounded="Rounded.All">
+                    <span style="font-family: 'Inter'; font-size: 12px;">Request access</span>
+                </MudButton>
+            </MudCardActions>
+            
+        <div style="position: absolute; bottom: 0; width: 100%; text-align: center; margin-top:200px;">
+            <div style="color: black; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 24px; word-wrap: break-word;">
+                Back to
+                <MudLink Href="/" Underline="Underline.None" Style="color: #3549FD; font-size: 14px; font-family: Inter; font-weight: 500; text-decoration: underline; line-height: 24px; word-wrap: break-word">
+                    HomePage
+                </MudLink>
+            </div>
+            </div>
+        </div>
+
+        
+      
+    </MudPaper>
+
+
+
+<style>
+    .mybutton {
+        width: 200px;
+        height: 40px;
+        border-radius: 7px; /* Round the corners to 5px */
+        display: flex; /* Set display to flex */
+        justify-content: center; /* Center the button horizontally */
+        margin: auto; /* Center the button both horizontally and vertically */
+        margin-bottom: 20px; /* Add space after the button */
+        margin-top: -10px;
+    }
+
+    <style >
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+    }
+</style>
+</style>
+
+@code {
+    // Method to handle button click for requesting access
+    private void RequestAccess()
+    {
+        // Add logic here for requesting access
+        // For example, you can navigate to another page or display a message
+        NavigationManager.NavigateTo("/requestaccess");
+    }
+}
