@@ -1,3 +1,4 @@
+<!--
 @page "/login"
 @layout NoNavLayout
 @using MudBlazor.Components
@@ -25,9 +26,126 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary">Sign In</MudButton>
         </MudForm>
 
-
-
     </MudPaper>
 </div>
+-->
+@page "/login"
+
+@using MudBlazor.Components
+
+<MyMudProviders />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BodyS:wght@400;500;600;700&display=swap">
+
+<PageTitle>SignIn</PageTitle>
 
 
+@using System.ComponentModel.DataAnnotations
+
+<MudPaper Class="pa-10" Style="@($"color:{Colors.Purple.Darken3}; font-size: 13px;")">
+
+    <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <MudGrid Class="mt-n10 pa-20">
+
+            <MudItem xs="4" sm="4" class=" mx-auto">
+                <MudCard Outlined="true" Style="@($"background-color: #f0f0f0; border-radius: 10px; height: 450px; width:400px")">
+                    <MudCardContent Class="pa-20">
+                        <MudText Align="Align.Center" Style="@($"color:{Colors.Blue.Darken4}; padding-top:10px")" Typo="Typo.h4">
+                            <span style="font-weight: bold; font-family: 'Inter'; font-size:23px">Welcome back</span>
+                        </MudText>
+
+                        <MudText Style="@($"color:{Colors.Shades.Black}; padding-top:10px; padding-left:20px")" Typo="Typo.body1" Class="mt-4">
+                            <span style="font-family: 'BodyS'; font-size: 18px;">Email</span>
+                        </MudText>
+                        <MudTextField Style="@($"height: 40px; width: 310px; color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; border-radius: 15px; font-size: 13px; margin-left: 20px; padding: 0 20px;")"
+                                       Class="mt-2" Variant="Variant.Outlined"
+                                      @bind-Value="model.Email" For="@(() => model.Email)" LabelCentered="true" />
+
+
+
+
+                        <MudText Style="@($"color:{Colors.Shades.Black}; font-size: 13px; padding-left:20px;")" Typo="Typo.body1" Class="mt-4">
+                            <span style="font-family: 'BodyS'; font-size: 18px;">Password</span>
+                        </MudText>
+                        <MudTextField Style="@($"height : 40px; width: 310px; color:{Colors.Grey.Lighten1}; padding-left:20px; background-color:{Colors.Shades.White}; border-radius: 15px; font-size: 13px; margin-left: 20px; padding:20px")"  Class="mt-2" Variant="Variant.Outlined"
+                                      @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password" />
+                        <br>
+
+                        <MudLink Style="@($"padding-top:10px; font-size: 13px;padding-left:20px; ")" Href="#" Underline="Underline.None">Forgotten your username or password?</MudLink>
+                        <br />
+                        <MudCheckBox Style="@($"font-size: 12px; padding-left:20px;")" @bind-Value="@Basic_CheckBox4" Disabled="false" UnCheckedColor="Color.Success" Label="Remember Username" LabelTypography="Typo.h6" Class="mt-4" />
+                    </MudCardContent>
+
+                    <MudCardActions style="padding-top: 2px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;">
+                        <MudButton @onclick="GoToHomePage" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" Class="mybutton" Rounded="Rounded.All">
+                            <span style="font-family: 'Inter'; font-size:12px;"> Sign In</span>
+                        </MudButton>
+                    </MudCardActions>
+
+                </MudCard>
+            </MudItem>
+
+
+        </MudGrid>
+    </EditForm>
+
+</MudPaper>
+
+<style>
+    .mybutton {
+        width: 200px;
+        height: 40px;
+        border-radius: 7px; /* Round the corners to 5px */
+        display: flex; /* Set display to flex */
+        justify-content: center; /* Center the button horizontally */
+        margin: auto; /* Center the button both horizontally and vertically */
+        margin-bottom: 20px; /* Add space after the button */
+        margin-top: -10px
+    }
+</style>
+
+
+@code {
+    RegisterAccountForm model = new RegisterAccountForm();
+    bool success;
+
+    public class RegisterAccountForm
+    {
+    
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [StringLength(30, ErrorMessage = "Password must be at least 8 characters long.", MinimumLength = 8)]
+        public string Password { get; set; }
+
+        [Required]
+        [Compare(nameof(Password))]
+        public string Password2 { get; set; }
+
+    }
+    public bool Basic_CheckBox4 { get; set; } = true;
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+
+    @code {
+        // Inject NavigationManager
+        [Inject]
+        NavigationManager NavigationManager { get; set; }
+
+        // Method to navigate to the home page if the username and passwords are correct 
+        private void GoToHomePage()
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+
+}
