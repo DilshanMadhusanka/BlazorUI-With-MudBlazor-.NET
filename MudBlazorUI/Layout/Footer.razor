@@ -1,43 +1,172 @@
-﻿<div style="background-color: #1679AB; width: 100%; padding: 20px 0;">
-    <MudContainer class="footer-container" Dense="true" Style="color: white;">
-        <MudGrid Spacing="4">
-            <!-- ENG RUH Section -->
-            <MudItem xs="12" sm="6" md="3">
-                <h4 class="mb-4" style="font-size: 1.5rem;">ENG RUH</h4>
-                <p class="mb-4" style="font-size: 1rem;">The Faculty of Engineering of University of Ruhuna was established on 1st July 1999 at Hapugala, Galle. Admission to the Faculty of Engineering, University of Ruhuna, is subject to the University Grants Commission policy on university admissions.</p>
-            </MudItem>
-            <!-- INFO Section -->
-            <MudItem xs="12" sm="6" md="3">
-                <h4 class="mb-4" style="font-size: 1.5rem;">INFO</h4>
-                <ul class="mb-4" style="font-size: 1rem;">
-                    <li><a href="#" style="color: white;">University of Ruhuna</a></li>
-                    <li><a href="#" style="color: white;">Faculty of Engineering</a></li>
-                    <li><a href="#" style="color: white;">ENG-MIS</a></li>
-                    <li><a href="#" style="color: white;">Library</a></li>
-                    <li><a href="#" style="color: white;">IESL</a></li>
-                </ul>
-            </MudItem>
-            <!-- CONTACT US Section -->
-            <MudItem xs="12" sm="6" md="3">
-                <h4 class="mb-4" style="font-size: 1.5rem;">CONTACT US</h4>
-                <p class="mb-4" style="font-size: 1rem;">Faculty of Engineering,Hapugala,Galle,Sri Lanka.</p>
-                <p class="mb-4" style="font-size: 1rem;">Email:  webmaster@eng.ruh.ac.lk</p>
-                <p style="font-size: 1rem;">Phone: +(94)0 91 2245765/6</p>
-            </MudItem>
-            <!-- SOCIAL MEDIA Section -->
-            <MudItem xs="12" sm="6" md="3">
-                <h4 class="mb-4" style="font-size: 1.5rem;">SOCIAL MEDIA</h4>
-                <ul class="mb-4 d-flex justify-content-start align-items-center" style="font-size: 1rem; list-style-type: none; padding: 0;">
-                    <li style="margin-right: 10px;"><a href="#" style="color: white;"><MudIcon Icon="@Icons.Custom.Brands.Facebook" Title="Facebook" /></a></li>
-                    <li style="margin-right: 10px;"><a href="#" style="color: white;"><MudIcon Icon="@Icons.Custom.Brands.Google" Title="Google" /></a></li>
-                    <li style="margin-right: 10px;"><a href="#" style="color: white;"><MudIcon Icon="@Icons.Custom.Brands.LinkedIn" Title="LinkedIn" /></a></li>
-                    <li style="margin-right: 10px;"><a href="#" style="color: white;"><MudIcon Icon="@Icons.Material.Filled.LocationOn" Title="LocationOn" /></a></li>
-                </ul>
-            </MudItem>
-        </MudGrid>
-    </MudContainer>
-</div>
+﻿<MyMudProviders />
 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rokkitt:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+           
+            line-height: 1.2;
+            font-family: 'Rokkitt', sans-serif;
+        }
+
+        * {
+            margin-top: 20px;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: auto;
+            padding: 0px;
+            padding-left:100px;
+            padding-right:20px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .footer {
+            background-color: #444E94;
+            padding: 20px 0;
+            margin-top: 20px;
+        }
+
+        .footer-col {
+            flex: 1 0 20%; /* Adjust this value as needed */
+            padding: 10px 10px; /* Adjust this value as needed */
+        }
+
+        .footer-col h4 {
+            font-size: 20px;
+            color: #ffffff;
+            text-transform: capitalize;
+            margin-bottom: 20px;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .footer-col h4::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+           
+            height: 2px;
+            width: 50px;
+        }
+
+        .footer-col ul li:not(:last-child) {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            font-size: 15px;
+            text-transform: capitalize;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 300;
+            transition: all 0.3s ease;
+        }
+
+        .footer-col ul li a:hover {
+            color: #ffffff;
+            padding-left: 8px;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            height: 30px;
+            width: 30px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 0 10px 10px 0;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
+            color: #ffffff;
+            transition: all 0.5s ease;
+        }
+
+        .social-links a:hover {
+            color: #24262b;
+            background-color: #ffffff;
+        }
+
+        .social-links a i {
+            font-size: 16px; /* Adjust size as needed */
+        }
+    </style>
+</head>
+<body>
+
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+                <div class="footer-col" style="word-wrap:normal; color:white; width:40%; padding-right:50px; padding-left:50px">
+                    <h4>ENG RUH</h4>
+                    <ul>
+                        <li>The Faculty of Engineering of University of Ruhuna was established on 1st July 1999 at Hapugala, Galle. Admission to the Faculty of Engineering, University of Ruhuna, is subject to the University Grants Commission policy on university admissions.</li>
+                    </ul>
+                </div>
+                <div class="footer-col" style="color:white; width:20%;padding-left:40px">
+                    <h4>INFO</h4>
+                    <ul>
+                        <li><a href="#">University of Ruhuna</a></li>
+                        <li><a href="#">Faculty of Engineering</a></li>
+                        <li><a href="#">ENG-MIS</a></li>
+                        <li><a href="#">Library</a></li>
+                        <li><a href="#">IESL</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col" style="color:white; width:25%">
+                    <h4>CONTACT US</h4>
+                    <ul>
+                        <li>Faculty of Engineering,<br>Hapugala, Galle, Sri Lanka.</li>
+                        <li>
+                            Phone : +(94)0 91 2245765/6
+
+                        </li>
+                        <li>
+                            webmaster@eng.ruh.ac.lk
+
+                        </li>
+
+                    </ul>
+                </div>
+                <div class="footer-col" style="color:white; width:18%; padding-right:80px">
+                    <h4>GET SOCIAL</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
+
+ 
 @code {
-
+    public string TextValue { get; set; }
 }
