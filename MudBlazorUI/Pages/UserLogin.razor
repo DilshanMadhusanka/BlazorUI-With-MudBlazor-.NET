@@ -31,6 +31,11 @@
 
 @using MudBlazor.Components
 @layout HeaderImageLayout
+@using System.ComponentModel.DataAnnotations
+@using MudBlazorUI.Auth.DTOs
+@inject IJwtAuthenticationService jwtAthenticationService
+@inject ISnackbar _snackbar
+
 
 
 
@@ -42,7 +47,7 @@
 <PageTitle>SignIn</PageTitle>
 
 
-@using System.ComponentModel.DataAnnotations
+
 
 <MudPaper Class="pa-10" Style="@($"color:{Colors.Purple.Darken3}; font-size: 13px;")">
 
@@ -80,7 +85,7 @@
                     </MudCardContent>
 
                     <MudCardActions style="padding-top: 2px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;">
-                        <MudButton @onclick="GoToHomePage" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" Class="mybutton" Rounded="Rounded.All">
+                        <MudButton @onclick="Login" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" Class="mybutton" Rounded="Rounded.All">
                             <span style="font-family: 'Inter'; font-size:12px;"> Sign In</span>
                         </MudButton>
                     </MudCardActions>
@@ -108,9 +113,12 @@
 </style>
 
 
+<p>@message</p>
+
 @code {
     RegisterAccountForm model = new RegisterAccountForm();
     bool success;
+    string message;
 
     public class RegisterAccountForm
     {
@@ -136,17 +144,28 @@
         StateHasChanged();
     }
 
-    @code {
+
         // Inject NavigationManager
         [Inject]
         NavigationManager NavigationManager { get; set; }
 
         // Method to navigate to the home page if the username and passwords are correct 
-        private void GoToHomePage()
+        private async void Login()
         {
-            NavigationManager.NavigateTo("/");
+        _snackbar.Clear();
+        _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+        _snackbar.Add("message", MudBlazor.Severity.Success);
+            AuthenticationRequestDTO requestDTO = new AuthenticationRequestDTO();
+            requestDTO.UserName = model.Email;
+            requestDTO.Password = model.Password;
+            message = await jwtAthenticationService.LoginAsync(requestDTO);
+            _snackbar.Clear();
+            _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+            _snackbar.Add(message, MudBlazor.Severity.Success);
+         
+
         }
-    }
+    
 
 
 }

@@ -1,5 +1,5 @@
-﻿
-
+﻿@inject NavigationManager navigateManager
+@inject ISnackbar _snackbar
 <MudAppBar Fixed="true" Dense="true" Style="background-color: rgba(0, 0, 0, 0.5); width: 100%">
     <MudContainer>
         <MudItem Justify="Justify.flexEnd" Style="width: 100%">
@@ -13,6 +13,9 @@
 @code {
     private void NavigateToHome()
     {
+        _snackbar.Clear();
+        _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+        _snackbar.Add("message", MudBlazor.Severity.Success);
         // Navigate to the Home page
        NavigationManager.NavigateTo("/");
     }
@@ -25,8 +28,9 @@
 
     private void NavigateToLogin()
     {
-        // Navigate to the Login page or perform login action
-       // You need to define the login logic or navigate to the login page here
+      
+      navigateManager.NavigateTo("/login");
+       
     }
 
    [Inject]
