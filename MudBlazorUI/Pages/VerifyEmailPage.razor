@@ -1,47 +1,53 @@
-﻿
+﻿@page "/verifyemail"
 
-<!--
-
-
+@layout NoNavLayout
 
 
 
-@page "/verifyemail"
 
-@layout HeaderImageLayout
-
-<MyMudProviders />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-
-<PageTitle>Verify Your Email</PageTitle>
-
-<MudPaper Class="pa-10" Style="color: #353C72; display:flex; font-size: 13px; justify-content: center; align-items: center; margin-top: 25px; border-radius: 8px;">
-    <div style="width: 390px; height: 400px; position: relative; background: #F3F1F1; border-radius: 8px; padding-right:10px">
-        <div class="header">Verify Your Email</div>
-        <div class="info">Please enter the 6 digit code sent to <br />@Email</div>
-        <div class="code">
-         
-            <MudTextField Style="@($"color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; margin-right: 5px;")" Variant="Variant.Outlined" @bind-Value="Code1" MaxLength="1" />
-            <MudTextField Style="@($"color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; margin-right: 5px;")" Variant="Variant.Outlined" @bind-Value="Code2"  MaxLength="1" />
-            <MudTextField Style="@($"color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; margin-right: 5px;")" Variant="Variant.Outlined" @bind-Value="Code3"  MaxLength="1" />
-            <MudTextField Style="@($"color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; margin-right: 5px;")" Variant="Variant.Outlined" @bind-Value="Code4"  MaxLength="1" />
-            <MudTextField Style="@($"color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; margin-right: 5px;")" Variant="Variant.Outlined" @bind-Value="Code5"  MaxLength="1" />
-            <MudTextField Style="@($"color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; margin-right: 5px;")" Variant="Variant.Outlined" @bind-Value="Code6" MaxLength="1" />
+<div class="page">
+    <MudLayout>
+        <div style="background-image: url('Assets/image4.JPG'); background-size: cover; background-position: center; height: 430px; width: 100%; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+                <MudImage Src="Assets/image3.png" Alt="UOR" Width="80" Height="100" Elevation="30" Class="rounded-lg" />
+                <div style="display: flex; flex-direction: column; align-items: center; padding-left: 20px; padding-right: 20px;">
+                    <MudText Typo="Typo.h3" Class="pa-2" Style="@($"color:{Colors.Grey.Lighten5}; font-weight: bold;")">FACULTY OF ENGINEERING</MudText>
+                    <MudText Typo="Typo.h5" Class="pa-2" Style="@($"color:{Colors.Grey.Lighten5}; font-weight: bold;")">UNIVERSITY OF RUHUNA</MudText>
+                </div>
+                <MudImage Src="Assets/image2.png" Alt="UOR" Width="80" Height="100" Elevation="30" Class="rounded-lg" />
+            </div>
         </div>
-        <div class="code-button">
-            <MudButton @onclick="Verify" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" Class="verify-button">
-                Verify
-            </MudButton>
+        <div style="display: flex; justify-content: center; position: relative; margin-top: -110px; margin-bottom: 100px; mx-auto;">
+            <MudPaper Class="pa-10" Style="color: #353C72; display:flex; font-size: 13px; justify-content: center; align-items: center; margin-top: 25px; border-radius: 8px;">
+                <div style="width: 390px; height: 400px; position: relative; border-radius: 8px; padding-right:10px">
+                    <div class="header">Verify Your Email</div>
+                    <div class="info">Please enter the 6 digit code sent to <br />@Email</div>
+                    <div class="code">
+
+                        <MudTextField Style="@($"color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; margin-right: 5px;")" Variant="Variant.Outlined" @bind-Value="Code1" MaxLength="1" />
+                        <MudTextField Style="@($"color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; margin-right: 5px;")" Variant="Variant.Outlined" @bind-Value="Code2" MaxLength="1" />
+                        <MudTextField Style="@($"color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; margin-right: 5px;")" Variant="Variant.Outlined" @bind-Value="Code3" MaxLength="1" />
+                        <MudTextField Style="@($"color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; margin-right: 5px;")" Variant="Variant.Outlined" @bind-Value="Code4" MaxLength="1" />
+                        <MudTextField Style="@($"color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; margin-right: 5px;")" Variant="Variant.Outlined" @bind-Value="Code5" MaxLength="1" />
+                        <MudTextField Style="@($"color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; margin-right: 5px;")" Variant="Variant.Outlined" @bind-Value="Code6" MaxLength="1" />
+                    </div>
+                    <div class="code-button">
+                        <MudButton @onclick="Verify" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" Class="verify-button">
+                            Verify
+                        </MudButton>
+                    </div>
+                    <div class="try-another">Try another method</div>
+                    <div class="resend">
+                        Didn't receive a code ?
+                        <MudLink Href="/resend" Underline="Underline.None" Class="resend-link">
+                            Resend
+                        </MudLink>
+                    </div>
+                </div>
+            </MudPaper>
         </div>
-        <div class="try-another">Try another method</div>
-        <div class="resend">
-            Didn't receive a code ?
-            <MudLink Href="/resend" Underline="Underline.None" Class="resend-link">
-                Resend
-            </MudLink>
-        </div>
-    </div>
-</MudPaper>
+    </MudLayout>
+</div>
 
 <style>
     .header {
@@ -141,4 +147,3 @@
 }
 
 
--->
