@@ -1,12 +1,27 @@
-﻿@inject NavigationManager navigateManager
+﻿@using MudBlazorUI.Auth.Services
+@inject NavigationManager navigateManager
 @inject ISnackbar _snackbar
+@inject AuthenticationStateProvider _authenticationStateProvider;
+
+
 <MudAppBar Fixed="true" Dense="true" Style="background-color: rgba(0, 0, 0, 0.5); width: 100%">
     <MudContainer>
         <MudItem Justify="Justify.flexEnd" Style="width: 100%">
             <MudButton @onclick="() => NavigateToHome()" Style="color: white">Home</MudButton>
             <MudButton @onclick="() => NavigateToAbout()" Style="color: white">About</MudButton>
-            <MudButton @onclick="() => NavigateToLogin()" Variant="Variant.Filled" Color="Color.Primary">Login</MudButton>
-        </MudItem>
+
+            <AuthorizeView>
+                <Authorized>
+                    <MudButton @onclick="() => LogOut()" Variant="Variant.Filled" Color="Color.Primary">Logout</MudButton>
+
+                </Authorized> 
+                <NotAuthorized>
+                    <MudButton @onclick="() => NavigateToLogin()" Variant="Variant.Filled" Color="Color.Primary">Login</MudButton>
+
+                </NotAuthorized>
+            </AuthorizeView>
+        
+             </MudItem>
     </MudContainer>
 </MudAppBar>
 
@@ -17,20 +32,31 @@
         _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
         _snackbar.Add("message", MudBlazor.Severity.Success);
         // Navigate to the Home page
-       NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/");
     }
 
-    private void NavigateToAbout()
+    private async void NavigateToAbout()
     {
+         var result = await jwtAuthenticationService.GetUserDetails();
+
         // Navigate to the About page
-       NavigationManager.NavigateTo("/about");
+        snackbar.Clear();
+        snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+        snackbar.Add(result.UserName ?? "null", MudBlazor.Severity.Success);
+        
     }
 
     private void NavigateToLogin()
     {
-      
-      navigateManager.NavigateTo("/login");
-       
+
+        navigateManager.NavigateTo("/login");
+
+    }
+
+    private void LogOut()
+    {
+        (_authenticationStateProvider as CustomAuthenticationStateProvider)?.NotifyUserLogout();
+
     }
 
    [Inject]

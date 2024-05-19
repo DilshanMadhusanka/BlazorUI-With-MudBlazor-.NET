@@ -7,6 +7,11 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Http
 @using Microsoft.JSInterop
 @using MudBlazorUI
+@using MudBlazorUI.Auth.DTOs
 @using MudBlazorUI.Layout
 @using MudBlazor
 @using Syncfusion.Blazor.Navigations
+@using Microsoft.AspNetCore.Components.Authorization
+@inject ISnackbar snackbar
+@inject AuthenticationStateProvider authenticationStateProvider;
+@inject IJwtAuthenticationService jwtAuthenticationService;

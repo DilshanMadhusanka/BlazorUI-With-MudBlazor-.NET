@@ -1,6 +1,13 @@
-﻿using MudBlazorUI.Auth.DTOs;
+﻿using MudBlazorUI.Auth.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
+using MudBlazorUI.Auth.DTOs;
+using MudBlazorUI.Auth.Services;
 
 namespace MudBlazorUI.Auth.Handler
 {
@@ -8,27 +15,28 @@ namespace MudBlazorUI.Auth.Handler
     {
         private readonly IJwtAuthenticationService _jwtAuthenticationService;
         private readonly ILogger<JwtAuthenticationHandler> _logger;
-        private readonly NavigationManager _navigationManager;
-        private readonly SemaphoreSlim _refreshLock = new SemaphoreSlim(1, 1);
+        private readonly AuthenticationStateProvider _authenticationStateProvider;
+        private readonly SemaphoreSlim _refreshLock = new SemaphoreSlim(2, 2);
 
         public JwtAuthenticationHandler(IJwtAuthenticationService jwtAuthenticationService,
-            ILogger<JwtAuthenticationHandler> logger, NavigationManager navigationManager)
+            ILogger<JwtAuthenticationHandler> logger,
+            AuthenticationStateProvider authenticationStateProvider)
         {
             _jwtAuthenticationService = jwtAuthenticationService;
             _logger = logger;
-            _navigationManager = navigationManager;
+            _authenticationStateProvider = authenticationStateProvider;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // Retrieve JWT token
             var jwt = await _jwtAuthenticationService.GetJwtAsync();
-            _logger.LogInformation("JWT token retrieved: {jwt}", jwt);
+           
 
             // Set Authorization header if JWT token is not empty or null
             if (!string.IsNullOrEmpty(jwt))
             {
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
             }
 
             // Call the base SendAsync method to continue processing the request pipeline
@@ -36,12 +44,15 @@ namespace MudBlazorUI.Auth.Handler
 
             if (!string.IsNullOrEmpty(jwt) && response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-                await _refreshLock.WaitAsync(cancellationToken);
+              
                 try
                 {
+                    Console.WriteLine("refresh started  1");
                     // Attempt to refresh the token
                     var refreshSucceeded = await _jwtAuthenticationService.Refresh();
-                    if (refreshSucceeded)
+                  
+
+                    if (refreshSucceeded==true)
                     {
                         jwt = await _jwtAuthenticationService.GetJwtAsync();
                         _logger.LogInformation("JWT token refreshed: {jwt}", jwt);
@@ -49,7 +60,7 @@ namespace MudBlazorUI.Auth.Handler
                         // Set Authorization header if JWT token is not empty or null
                         if (!string.IsNullOrEmpty(jwt))
                         {
-                            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
+                            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
                             // Retry the request with the refreshed token
                             response = await base.SendAsync(request, cancellationToken);
@@ -57,8 +68,12 @@ namespace MudBlazorUI.Auth.Handler
                     }
                     else
                     {
-                        // Navigate to login page if refresh fails
-                        _navigationManager.NavigateTo("/login");
+                        Console.WriteLine("refresh fail 2");
+
+                        // Notify authentication state provider of logout
+                        (_authenticationStateProvider as CustomAuthenticationStateProvider)?.NotifyUserLogout();
+                        await _jwtAuthenticationService.LogoutAcync();
+                        return null;
                     }
                 }
                 finally

@@ -4,6 +4,9 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net.Http.Json;
 using MudBlazor;
+using MudBlazorUI.Core.DTOs.Request;
+using MudBlazorUI.Core.DTOs.Response;
+using MudBlazorUI.Core.DTOs.Common;
 
 
 namespace MudBlazorUI.Auth.DTOs
@@ -35,6 +38,7 @@ namespace MudBlazorUI.Auth.DTOs
             return await _sessionStorageService.GetItemAsync<string>(JWT_KEY); 
         }
 
+
         // Logout User
         public async Task LogoutAcync()
         {
@@ -46,7 +50,7 @@ namespace MudBlazorUI.Auth.DTOs
         }
 
         //Login User
-        public async Task<string> LoginAsync(AuthenticationRequestDTO request)
+        public async Task<AuthenticationResponseDTO?> LoginAsync(AuthenticationRequestDTO request)
         {
             var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("api/Account/Login", request);
             var content = await result.Content.ReadAsStringAsync();
@@ -64,10 +68,10 @@ namespace MudBlazorUI.Auth.DTOs
 
            
 
-                return response.Message;
+                return response;
             }
 
-            return response!.Message;
+            return response;
 
         }
 
@@ -86,6 +90,7 @@ namespace MudBlazorUI.Auth.DTOs
 
         }
 
+
         public async Task<bool> Refresh()
         {
             var request = new TokenInfoDTO
@@ -94,24 +99,32 @@ namespace MudBlazorUI.Auth.DTOs
                 RefreshToken = await _sessionStorageService.GetItemAsync<string>(RERESH_KEY)
             };
 
-            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("api/Account/Request-RefreshToken", request);
 
-            if(result.IsSuccessStatusCode)
-            {
-                var content = await result.Content.ReadAsStringAsync();
-                var response = JsonConvert.DeserializeObject<AuthenticationResponseDTO>(content);
+            if (!string.IsNullOrEmpty(request.RefreshToken)) {
 
-                await _sessionStorageService.SetItemAsync(JWT_KEY, response!.JwtToken);
-                await _sessionStorageService.SetItemAsync(RERESH_KEY, response.RefreshToken);
+                var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("api/Account/Request-RefreshToken", request);
+                Console.WriteLine("refresh " + result.StatusCode);
 
-                _jwtCache = response.JwtToken;
+                if (result.IsSuccessStatusCode)
+                {
+                    var content = await result.Content.ReadAsStringAsync();
+                    var response = JsonConvert.DeserializeObject<AuthenticationResponseDTO>(content);
 
-               return true;
+                    await _sessionStorageService.SetItemAsync(JWT_KEY, response!.JwtToken);
+                    await _sessionStorageService.SetItemAsync(RERESH_KEY, response.RefreshToken);
 
+                    _jwtCache = response.JwtToken;
+
+                    Console.WriteLine("Refreshed");
+
+                    return true;
+
+                }
             }
 
-            //await LogoutAcync();
-            await Console.Out.WriteAsync("refresh fail");
+
+            await LogoutAcync();
+            Console.WriteLine("refresh fail");
 
             return false;
         }
