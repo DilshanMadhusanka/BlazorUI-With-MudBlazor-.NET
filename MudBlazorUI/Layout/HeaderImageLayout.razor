@@ -1,0 +1,17 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider @bind-IsDarkMode="@themeOn"/><MudDialogProvider />
+<MudSnackbarProvider />
+
+<HeaderImage />
+@Body
+<Footer />
+
+@code {
+    bool _drawerOpen = true;
+    bool themeOn = false;
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}
