@@ -1,0 +1,29 @@
+
+
+@code {
+   
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+   
+
+    protected override async Task OnInitializedAsync()
+    {
+
+       
+            NavigationManager.NavigateTo("/login");
+       
+        
+    }
+
+    
+
+   
+
+   
+
+  
+
+   
+}
