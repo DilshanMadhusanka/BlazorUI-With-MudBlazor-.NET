@@ -8,6 +8,8 @@ using MudBlazorUI;
 using MudBlazorUI.Auth.DTOs;
 using MudBlazorUI.Auth.Handler;
 using MudBlazorUI.Auth.Services;
+using Blazored.LocalStorage;
+using MudBlazorUI.Auth.Const;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -32,7 +34,9 @@ builder.Services.AddHttpClient("ServerApi", client => client.BaseAddress = new U
 
 builder.Services.AddSingleton<IJwtAuthenticationService, JwtAuthenticationService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+builder.Services.AddScoped<IUserProfile, UserProfile>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredSessionStorageAsSingleton();
+builder.Services.AddBlazoredLocalStorageAsSingleton();
 
 await builder.Build().RunAsync();
