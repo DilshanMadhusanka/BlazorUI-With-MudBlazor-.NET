@@ -4,8 +4,7 @@
 
 @inherits LayoutComponentBase
 
-
-<MudThemeProvider />
+<MudThemeProvider IsDarkMode="@themeOn" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 <MyMudProviders />
@@ -15,3 +14,12 @@
 <Footer />
 
 
+@code{
+    private bool themeOn;
+    protected override async Task OnInitializedAsync()
+    {
+        string? theme = await userProfile.GetTheme();
+        themeOn = !string.IsNullOrEmpty(theme) && theme.Equals("dark", StringComparison.OrdinalIgnoreCase);
+        await base.OnInitializedAsync();
+    }
+}

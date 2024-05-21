@@ -26,7 +26,7 @@
         <AuthorizeView>
             <NotAuthorized>
                 <MudButton StartIcon="@Icons.Material.Filled.Login"
-                           Href="/login"
+                           OnClick="NavigateToLogin"
                            Color="Color.Inherit"> Login </MudButton>
             </NotAuthorized>
         </AuthorizeView>
@@ -59,6 +59,11 @@
     private bool _drawerOpen = true;
     private bool themeOn;
 
+
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
     DialogOptions topCenter = new DialogOptions() { Position = DialogPosition.TopRight, };
     private void OpenDialog(DialogOptions options)
     {

@@ -1,5 +1,6 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
+@using Blazored.SessionStorage
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
@@ -13,7 +14,10 @@
 @using MudBlazor
 @using Syncfusion.Blazor.Navigations
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Authorization
 @inject ISnackbar snackbar
 @inject AuthenticationStateProvider authenticationStateProvider;
 @inject IJwtAuthenticationService jwtAuthenticationService;
 @inject IUserProfile userProfile
+@inject NavigationManager NavigationManager
+@inject ISessionStorageService store
