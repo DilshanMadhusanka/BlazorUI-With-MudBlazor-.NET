@@ -6,9 +6,6 @@
 @using MudBlazorUI.Core.DTOs.Request
 
 
-<MudThemeProvider />
-<MudDialogProvider />
-<MudSnackbarProvider />
 
 
 <div class="page">
@@ -58,8 +55,29 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState{ get; set; }
+
     RegisterAccountForm model = new RegisterAccountForm();
     bool success;
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    public bool Basic_CheckBox4 { get; set; } = true;
+
+    string message;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var user = (await AuthenticationState).User;
+        if (user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        await base.OnInitializedAsync();
+    }
 
     public class RegisterAccountForm
     {
@@ -72,17 +90,16 @@
         public string Password { get; set; }
     }
 
-    public bool Basic_CheckBox4 { get; set; } = true;
+
 
     private void OnValidSubmit(EditContext context)
     {
         success = true;
         StateHasChanged();
     }
-    string message;
 
-    [Inject]
-    NavigationManager NavigationManager { get; set; }
+
+
 
     private async void GoToHomePage()
     {
@@ -99,12 +116,24 @@
         if (response.JwtToken != null || response.RefreshToken!=null)
         {
             snackbar.Add(response.Message, MudBlazor.Severity.Success);
+            (authenticationStateProvider as CustomAuthenticationStateProvider)?.UpdateAuthenticationState();
+
         }
-        else
+        else if(response.IsLocked==true)
         {
             snackbar.Add(response.Message, MudBlazor.Severity.Error);
+            NavigationManager.NavigateTo("/restructedUser");
+        }else if(response.EmailConfirmed==false)
+        {
+            snackbar.Add(response.Message, MudBlazor.Severity.Error);
+            NavigationManager.NavigateTo("/verifiy email");
+        }else if(response.Is2FAConfirmed==false)
+        {
+            snackbar.Add(response.Message, MudBlazor.Severity.Success);
+            NavigationManager.NavigateTo("/verifiy email");
         }
-            (authenticationStateProvider as CustomAuthenticationStateProvider)?.UpdateAuthenticationState();
+
+       
 
         
     }

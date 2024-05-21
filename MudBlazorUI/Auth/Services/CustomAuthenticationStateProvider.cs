@@ -156,8 +156,9 @@ namespace MudBlazorUI.Auth.Services
                     claimsPrincipal = SetClaimsPrincipal(name, id, role);
                 }
             }
-
+          
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
+            
         }
 
         public async Task<(ClaimsPrincipal?,bool)> ValidateTokenAsync(string token)
