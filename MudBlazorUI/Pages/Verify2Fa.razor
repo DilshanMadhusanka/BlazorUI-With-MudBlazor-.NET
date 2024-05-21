@@ -1,4 +1,6 @@
-﻿@page "/verifyemail"
+﻿@page "/verifiy2Fa"
+@using MudBlazorUI.Auth.Services
+@using MudBlazorUI.Core.DTOs.Request
 @layout NoNavLayout
 
 
@@ -130,6 +132,21 @@
 </style>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var user = (await AuthenticationState).User;
+        if (user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        await base.OnInitializedAsync();
+    }
+
+
     private string Email = "example@abc.com";
     private string Code1 { get; set; }
     private string Code2 { get; set; }
@@ -138,10 +155,43 @@
     private string Code5 { get; set; }
     private string Code6 { get; set; }
 
-    private void Verify()
+    private async void Verify()
     {
         string verificationCode = $"{Code1}{Code2}{Code3}{Code4}{Code5}{Code6}";
-        // Add logic here to verify the email with the verification code
+
+        TwoFAVerificatinRequestDTO twoFAVerificatinRequestDTO = new TwoFAVerificatinRequestDTO();
+        twoFAVerificatinRequestDTO.Email = await store.GetItemAsync<string>("Email");
+        twoFAVerificatinRequestDTO.Code = verificationCode;
+
+        var response = await jwtAuthenticationService.TwoFactorVerify(twoFAVerificatinRequestDTO);
+
+        if (response.JwtToken != null || response.RefreshToken != null)
+        {
+            snackbar.Add(response.Message, MudBlazor.Severity.Success);
+            NavigationManager.NavigateTo("/#");
+            (authenticationStateProvider as CustomAuthenticationStateProvider)?.UpdateAuthenticationState();
+
+        }
+        else if (response.IsLocked == true)
+        {
+            snackbar.Add(response.Message, MudBlazor.Severity.Error);
+            NavigationManager.NavigateTo("/accountrestricted");
+        }
+        else if (response.EmailConfirmed == false)
+        {
+            snackbar.Add(response.Message, MudBlazor.Severity.Error);
+            NavigationManager.NavigateTo("/confirm-Email");
+        }
+        else if (response.Is2FAConfirmed == true)
+        {
+            snackbar.Add(response.Message, MudBlazor.Severity.Success);
+            NavigationManager.NavigateTo("/verifiy2Fa");
+        }
+        else
+        {
+            snackbar.Add(response.Message, MudBlazor.Severity.Error);
+
+        }
     }
 }
 

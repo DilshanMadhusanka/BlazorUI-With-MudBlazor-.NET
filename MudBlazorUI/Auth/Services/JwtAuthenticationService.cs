@@ -66,7 +66,29 @@ namespace MudBlazorUI.Auth.DTOs
                     await _sessionStorageService.SetItemAsync(RERESH_KEY, response.RefreshToken);
                 }
 
-           
+                return response;
+            }
+
+            return response;
+
+        }
+
+        //verify 2FA
+        public async Task<AuthenticationResponseDTO?> TwoFactorVerify(TwoFAVerificatinRequestDTO request)
+        {
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("/api/Account/2FAVerification", request);
+            var content = await result.Content.ReadAsStringAsync();
+
+            var response = JsonConvert.DeserializeObject<AuthenticationResponseDTO>(content);
+            if (result.IsSuccessStatusCode)
+            {
+
+                if (response!.JwtToken != null)
+                {
+                    //store the token in session storage
+                    await _sessionStorageService.SetItemAsync(JWT_KEY, response.JwtToken);
+                    await _sessionStorageService.SetItemAsync(RERESH_KEY, response.RefreshToken);
+                }
 
                 return response;
             }
@@ -74,6 +96,7 @@ namespace MudBlazorUI.Auth.DTOs
             return response;
 
         }
+
 
         public async Task<UserModelResponseDTO?> GetUserDetails()
         {

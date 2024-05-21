@@ -15,5 +15,8 @@ namespace MudBlazorUI.Auth.DTOs
         Task<UserModelResponseDTO?> GetUserDetails();
 
         public Task<bool> Refresh();
+
+
+        public Task<AuthenticationResponseDTO?> TwoFactorVerify(TwoFAVerificatinRequestDTO request);
     }
 }
