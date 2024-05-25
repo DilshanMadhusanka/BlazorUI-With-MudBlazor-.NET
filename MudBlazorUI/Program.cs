@@ -35,6 +35,7 @@ builder.Services.AddHttpClient("ServerApi", client => client.BaseAddress = new U
 builder.Services.AddSingleton<IJwtAuthenticationService, JwtAuthenticationService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<IUserProfile, UserProfile>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredSessionStorageAsSingleton();
 builder.Services.AddBlazoredLocalStorageAsSingleton();

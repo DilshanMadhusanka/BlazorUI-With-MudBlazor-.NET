@@ -1,8 +1,6 @@
 ﻿
 using MudBlazorUI.Core.DTOs.Request;
 using MudBlazorUI.Core.DTOs.Response;
-using MudBlazorUI.Core.DTOs.Request;
-using MudBlazorUI.Core.DTOs.Response;
 
 namespace MudBlazorUI.Auth.DTOs
 {

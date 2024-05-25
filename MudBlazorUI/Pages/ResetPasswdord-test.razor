@@ -1,0 +1,61 @@
+@page "/reset-password"
+@inject HttpClient Http
+
+<h3>Reset Password</h3>
+<MudPaper Height="400px" Width="100%">
+    <MudContainer MaxWidth="MaxWidth.Small">
+        <MudPaper Height="400px" Width="100%" Square="true" Class="mud-theme-primary"></MudPaper>
+    </MudContainer>
+</MudPaper>
+<EditForm Model="@resetPasswordModel" OnValidSubmit="@HandleResetPassword">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText @bind-Value="resetPasswordModel.Email" Placeholder="Email" />
+    <InputText @bind-Value="resetPasswordModel.Password" Placeholder="New Password" type="password" />
+    <InputText @bind-Value="resetPasswordModel.ConfirmPassword" Placeholder="Confirm Password" type="password" />
+
+    <button type="submit">Reset Password</button>
+</EditForm>
+
+@code {
+    private ResetPasswordModel resetPasswordModel = new ResetPasswordModel();
+
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        resetPasswordModel.Email = queryParams["email"];
+        resetPasswordModel.Token = queryParams["token"];
+    }
+
+    private async Task HandleResetPassword()
+    {
+        if (resetPasswordModel.Password != resetPasswordModel.ConfirmPassword)
+        {
+            snackbar.Add("Passwords do not match", Severity.Error);
+            return;
+        }
+
+        var response = await Http.PostAsJsonAsync("https://your-backend-domain.com/api/Account/ForgotPassword-ChangePassword", resetPasswordModel);
+        var responseMessage = await response.Content.ReadAsStringAsync();
+
+        if (response.IsSuccessStatusCode)
+        {
+            snackbar.Add("Password reset successful", Severity.Success);
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            snackbar.Add(responseMessage, Severity.Error);
+        }
+    }
+
+    public class ResetPasswordModel
+    {
+        public string Email { get; set; }
+        public string Token { get; set; }
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
+    }
+}

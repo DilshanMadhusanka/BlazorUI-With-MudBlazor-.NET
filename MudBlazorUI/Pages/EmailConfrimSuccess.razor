@@ -1,0 +1,64 @@
+﻿@page "/confirm-Email-Successful"
+@layout NoNavLayout
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<h3>@message</h3>
+
+@code {
+    [Parameter]
+    public string UserId { get; set; }
+
+    [Parameter]
+    public string Code { get; set; }
+
+    private string message="Please wait";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var query = new Uri(Navigation.Uri).Query;
+        var queryParams = System.Web.HttpUtility.ParseQueryString(query);
+
+        UserId = queryParams["userId"];
+        Code = queryParams["code"];
+
+        if (!string.IsNullOrEmpty(UserId) && !string.IsNullOrEmpty(Code))
+        {
+            await ConfirmEmailAsync();
+            Console.WriteLine(Code);
+        }
+        else
+        {
+            // Handle error
+            Navigation.NavigateTo("/confirmation-error");
+        }
+    }
+
+    private async Task ConfirmEmailAsync()
+    {
+        try
+        {
+
+            //NEED TO CHANGE WICH API GATE WAY
+            var response = await Http.GetAsync($"https://localhost:7048/api/Account/ConfirmEmail?userId={UserId}&code={Code}");
+            var responseMessage = await response.Content.ReadAsStringAsync();
+            message = responseMessage;
+            snackbar.Clear();
+            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+            if (response.IsSuccessStatusCode)
+            {
+                snackbar.Add(responseMessage, MudBlazor.Severity.Success);
+            }
+            else
+            {
+                snackbar.Add(responseMessage, MudBlazor.Severity.Error);
+
+            }
+        }
+        catch (Exception)
+        {
+            // Handle exception
+            Navigation.NavigateTo("/confirmation-error");
+        }
+    }
+}
