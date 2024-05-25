@@ -2,6 +2,7 @@
 @inherits LayoutComponentBase
 @inject IDialogService Dialog
 
+
 <MudThemeProvider IsDarkMode="@themeOn" />
 <MudDialogProvider FullWidth="true"
                    MaxWidth="MaxWidth.ExtraSmall"
@@ -50,11 +51,13 @@
         </Authorized>
     </AuthorizeView>
 
-    <MudMainContent>
-        @Body
-    </MudMainContent>
+      @Body
+   
 </MudLayout>
 
+
+
+<Footer/>
 @code {
     private bool _drawerOpen = true;
     private bool themeOn;

@@ -35,5 +35,11 @@
     <None Include="wwwroot\Assets\5.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Pages\EmailConfrimSuccess.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>
 
