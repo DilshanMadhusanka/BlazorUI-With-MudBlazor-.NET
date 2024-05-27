@@ -2,6 +2,7 @@
 @using MudBlazorUI.Auth.Services
 @using MudBlazorUI.Core.DTOs.Request
 @layout NoNavLayout
+@inject IAccountService accountService
 
 
 
@@ -40,7 +41,7 @@
                     <div class="try-another">Try another method</div>
                     <div class="resend">
                         Didn't receive a code ?
-                        <MudLink Href="/resend" Underline="Underline.None" Class="resend-link">
+                        <MudLink  Underline="Underline.None" OnClick="Resend"  Class="resend-link">
                             Resend
                         </MudLink>
                     </div>
@@ -137,7 +138,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-
+        snackbar.Clear();
+        snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
         var user = (await AuthenticationState).User;
         if (user.Identity.IsAuthenticated)
         {
@@ -155,7 +157,24 @@
     private string Code5 { get; set; }
     private string Code6 { get; set; }
 
-    private async void Verify()
+    private async Task Resend()
+    {
+        var email = await store.GetItemAsync<string>("Email");
+        var result =await accountService.Resend2FACode(email);
+
+        if (result != null)
+        {
+            snackbar.Add(result, MudBlazor.Severity.Success);
+        }
+        else
+        {
+            snackbar.Add("Something is wrong , try again", MudBlazor.Severity.Error);
+
+        }
+
+    }
+
+    private async Task Verify()
     {
         string verificationCode = $"{Code1}{Code2}{Code3}{Code4}{Code5}{Code6}";
 

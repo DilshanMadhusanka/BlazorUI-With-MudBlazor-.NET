@@ -1,0 +1,19 @@
+﻿@page "/confirm-Email"
+@layout NoNavLayout
+
+<h1>Your Email is not confirmed</h1>
+
+@code{
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await AuthenticationState).User;
+        if (user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        await base.OnInitializedAsync();
+    }
+}

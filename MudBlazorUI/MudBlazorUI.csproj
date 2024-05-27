@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Pages\EmailConfrimSuccess.razor">
+    <Content Update="Pages\Account\EmailConfrimSuccess.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
   </ItemGroup>

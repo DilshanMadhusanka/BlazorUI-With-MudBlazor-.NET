@@ -14,11 +14,16 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar Elevation="1" Style="background-color: rgba(0, 0, 0, 0.5); width: 100%">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu"
-                       Color="Color.Inherit"
-                       Edge="Edge.Start"
-                       OnClick="@DrawerToggle" />
+    <MudAppBar Elevation="2" Style="background-color: rgba(0, 0, 0, 0.5); width: 100%">
+       
+        <AuthorizeView>
+            <Authorized>
+                <MudIconButton Icon="@(_drawerOpen==false ? Icons.Material.Filled.Menu : Icons.Material.Filled.Close)"
+                               Color="Color.Inherit"
+                               Edge="Edge.Start"
+                               OnClick="@DrawerToggle" />
+            </Authorized>
+        </AuthorizeView>
 
         <MudText Typo="Typo.h5" Class="px-4">Faculty of Engineering</MudText>
 

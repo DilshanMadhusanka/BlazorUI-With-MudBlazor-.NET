@@ -6,6 +6,9 @@
 <h3>@message</h3>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
     [Parameter]
     public string UserId { get; set; }
 
@@ -16,6 +19,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+
+        var user = (await AuthenticationState).User;
+        if (user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/");
+        }
         var query = new Uri(Navigation.Uri).Query;
         var queryParams = System.Web.HttpUtility.ParseQueryString(query);
 

@@ -1,0 +1,83 @@
+﻿@using MudBlazorUI.Auth.Services
+@layout MainLayout
+@inherits LayoutComponentBase
+
+
+
+
+
+<MudPaper Width="240px" Height="100vh" Elevation="1" Class="py-3">
+
+    <MudNavMenu Color="Color.Info">
+      
+        <MudNavGroup Title="User Management" Icon="@Icons.Material.Filled.ManageAccounts" Expanded="true">
+            <MudNavLink Href="/users-list" Icon="@Icons.Material.Filled.List">All Users</MudNavLink>
+            <MudNavLink Href="/Create-user" Icon="@Icons.Material.Filled.Create">Create User</MudNavLink>
+        </MudNavGroup>
+
+        <MudNavGroup Title="Backup Database" Icon="@Icons.Material.Filled.SupervisorAccount" Expanded="true">
+         
+        </MudNavGroup>
+        <MudNavLink Href="/loginInfo-list" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Info">User Login Infos</MudNavLink>
+        <MudNavLink Href="/Counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage">Servers</MudNavLink>
+
+
+        <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" Expanded="true">
+            <MudNavLink Href="/security">Security</MudNavLink>
+        </MudNavGroup>
+
+        <MudNavLink Icon="@Icons.Material.Filled.ManageAccounts" Href="/Account/Manage">My Account</MudNavLink>
+    </MudNavMenu>
+
+    <MudSpacer></MudSpacer>
+
+
+    <MudNavLink Icon="@Icons.Material.Filled.Logout" OnClick="logOut">Logout</MudNavLink>
+
+</MudPaper>
+
+
+
+
+
+@code {
+
+    private string? currentUrl;
+
+    private string name;
+    private string email;
+    private Guid id;
+
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    private void logOut()
+    {
+         (authenticationStateProvider as CustomAuthenticationStateProvider)?.NotifyUserLogout();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+
+
+
+
+
+
+
+
+
+
+
+}
