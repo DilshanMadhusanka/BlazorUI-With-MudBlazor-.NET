@@ -27,5 +27,37 @@ namespace MudBlazorUI.Auth.Services
                 return false ;
             }
         }
+
+        public async Task<UserModelResponseDTO?> GetUserDetaiils() {
+
+            var result = await _factory.CreateClient("ServerApi").GetAsync("api/Account/Get-User-Details");
+            if (result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+
+                var response = JsonConvert.DeserializeObject<UserModelResponseDTO>(content);
+                return response;
+
+            }
+
+            else return null;
+        }
+
+
+        public async Task<string?> Resend2FACode(string email)
+        {
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("api/Account/Resend-2FAVerificationCode",email);
+            if (result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+
+                var response = JsonConvert.DeserializeObject<AuthenticationResponseDTO>(content);
+                return response!.Message;
+                
+            }
+
+            else return null;
+        }
+
     }
 }
