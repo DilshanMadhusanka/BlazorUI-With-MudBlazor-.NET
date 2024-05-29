@@ -1,4 +1,5 @@
-﻿using MudBlazorUI.Core.DTOs.Response;
+﻿using MudBlazorUI.Core.DTOs.Request;
+using MudBlazorUI.Core.DTOs.Response;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 
@@ -57,6 +58,15 @@ namespace MudBlazorUI.Auth.Services
             }
 
             else return null;
+        }
+
+        public async Task<HttpResponseMessage> ChangePassword(ChangePasswordRequestDTO changePassword)
+        {
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("api/Account/ChangePassword", changePassword);
+             
+                return result;
+
+           
         }
 
     }
