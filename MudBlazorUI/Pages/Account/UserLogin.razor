@@ -11,17 +11,17 @@
 
 <div class="page">
     <MudLayout>
-        <div style="background-image: url('Assets/image4.JPG'); background-size: cover; background-position: center; height: 430px; width: 100%; position: relative;">
-            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+        <div style="background-image: url('Assets/background-login.png'); background-size: cover; background-position: center; height: 430px; width: 100%; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%;margin-top: -60px; height: 100%; display: flex; justify-content: center; align-items: center;">
                 <MudImage Src="Assets/image3.png" Alt="UOR" Width="80" Height="100" Elevation="30" Class="rounded-lg" />
                 <div style="display: flex; flex-direction: column; align-items: center; padding-left: 20px; padding-right: 20px;">
-                    <MudText Typo="Typo.h3" Class="pa-2" Style="@($"color:{Colors.Grey.Lighten5}; font-weight: bold;")">FACULTY OF ENGINEERING</MudText>
+                    <MudText Typo="Typo.h4" Class="pa-2" Style="@($"color:{Colors.Grey.Lighten5}; font-weight: bold;")">FACULTY OF ENGINEERING</MudText>
                     <MudText Typo="Typo.h5" Class="pa-2" Style="@($"color:{Colors.Grey.Lighten5}; font-weight: bold;")">UNIVERSITY OF RUHUNA</MudText>
                 </div>
                 <MudImage Src="Assets/image2.png" Alt="UOR" Width="80" Height="100" Elevation="30" Class="rounded-lg" />
             </div>
         </div>
-        <div style="display: flex; justify-content: center; position: relative; margin-top: -80px; margin-bottom: 100px; margin-left: -90px;">
+        <div style="display: flex; justify-content: center; position: relative; margin-top: -160px; margin-bottom: 120px; margin-left: -90px;">
             <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
                 <DataAnnotationsValidator />
                 <MudGrid Justify="Justify.Center" Class="mt-n10 pa-20">
