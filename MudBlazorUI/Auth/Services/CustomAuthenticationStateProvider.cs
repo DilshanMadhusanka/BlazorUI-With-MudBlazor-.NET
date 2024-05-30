@@ -107,9 +107,9 @@ namespace MudBlazorUI.Auth.Services
             }*/
 
             // Use custom claim types based on your JWT structure
-            var name = principals.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Name)?.Value; // Custom claim type
-            var id = principals.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value; // Custom claim type
-            var role = principals.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value; // Custom claim type
+            var name = principals?.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Name)?.Value; // Custom claim type
+            var id = principals?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value; // Custom claim type
+            var role = principals?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value; // Custom claim type
             Console.WriteLine(name + id + role);
 
             return (name, id, role);

@@ -49,7 +49,7 @@
         {
 
             //NEED TO CHANGE WICH API GATE WAY
-            var response = await Http.GetAsync($"https://localhost:7048/api/Account/ConfirmEmail?userId={UserId}&code={Code}");
+            var response = await Http.GetAsync($"https://localhost:7111/ApiGateWay/Auth-api/Account/ConfirmEmail?userId={UserId}&code={Code}");
             var responseMessage = await response.Content.ReadAsStringAsync();
             message = responseMessage;
             snackbar.Clear();
