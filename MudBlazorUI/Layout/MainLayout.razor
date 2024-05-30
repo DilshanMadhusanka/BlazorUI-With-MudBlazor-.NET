@@ -41,7 +41,7 @@
                    ThumbIconColor="@(themeOn==true ? Color.Warning : Color.Warning)" />
         <MudBadge Dot="true" Color="Color.Info"  Class="mx-6 my-4" Overlap="true">
             <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Primary"
-                           OnClick="@((e) => OpenDialog(topCenter))" aria-label="github">
+                           OnClick="@((e) => OpenNotifications())" aria-label="notifications">
 
             </MudIconButton>
         </MudBadge>
@@ -72,10 +72,10 @@
     {
         NavigationManager.NavigateTo("/login");
     }
-    DialogOptions topCenter = new DialogOptions() { Position = DialogPosition.TopRight, };
-    private void OpenDialog(DialogOptions options)
+
+    private void OpenNotifications()
     {
-        Dialog.Show<NotificationsView>("Notifications", options);
+        NavigationManager.NavigateTo("Notifications");
     }
 
 

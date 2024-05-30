@@ -17,7 +17,7 @@ namespace MudBlazorUI.Auth.Services
 
         public async Task<bool> ForgotPassword(string email)
         {
-            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("api/Account/ForgotPassword-Verification-Sender", email);
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Account/ForgotPassword-Verification-Sender", email);
            
             if (result.IsSuccessStatusCode) {
                 return true;
@@ -31,7 +31,7 @@ namespace MudBlazorUI.Auth.Services
 
         public async Task<UserModelResponseDTO?> GetUserDetaiils() {
 
-            var result = await _factory.CreateClient("ServerApi").GetAsync("api/Account/Get-User-Details");
+            var result = await _factory.CreateClient("ServerApi").GetAsync("ApiGateWay/Auth-api/Account/Get-User-Details");
             if (result.IsSuccessStatusCode)
             {
                 var content = await result.Content.ReadAsStringAsync();
@@ -47,7 +47,7 @@ namespace MudBlazorUI.Auth.Services
 
         public async Task<string?> Resend2FACode(string email)
         {
-            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("api/Account/Resend-2FAVerificationCode",email);
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Account/Resend-2FAVerificationCode", email);
             if (result.IsSuccessStatusCode)
             {
                 var content = await result.Content.ReadAsStringAsync();
@@ -62,7 +62,7 @@ namespace MudBlazorUI.Auth.Services
 
         public async Task<HttpResponseMessage> ChangePassword(ChangePasswordRequestDTO changePassword)
         {
-            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("api/Account/ChangePassword", changePassword);
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Account/ChangePassword", changePassword);
              
                 return result;
 

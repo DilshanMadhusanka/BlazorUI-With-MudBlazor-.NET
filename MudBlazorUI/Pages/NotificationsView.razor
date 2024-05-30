@@ -1,16 +1,163 @@
-﻿<MudDialog>
-    <DialogContent>
-        Notifications
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
-    </DialogActions>
-</MudDialog>
+﻿@page "/Notifications"
+@using Microsoft.IdentityModel.JsonWebTokens
+@using MudBlazorUI.Notification_Service.DTOs
+@using MudBlazorUI.Notification_Service.Services
+@inject INotificationService notificationService
+@inject ISnackbar snackbar
+@using System.Net.Http.Json
+@using System.Security.Claims
+@inject HttpClient httpClient
+
+@attribute [Authorize]
+
+
+<div style="height:100%;margin:80px 40px 10px 40px;">
+    <MudTable Elevation="1" ServerData="@(new Func<TableState, Task<TableData<NotificationResponseDTO>>>(ServerReload))"
+              Dense="true" Hover="true" @ref="table">
+
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Notifications</MudText>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(s => OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortLabel="nr_field" T="NotificationResponseDTO">Title</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="sign_field" T="NotificationResponseDTO">Content</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="name_field" T="NotificationResponseDTO">AddedDate</MudTableSortLabel></MudTh>
+            <MudTh>
+                <MudIconButton Disabled="!enableMarkAllAsReadBtn" OnClick="()=>MarkAllAsRead()" Color="Color.Success" Icon="@(Icons.Material.Filled.MarkEmailUnread)"></MudIconButton>
+            </MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Title">@context.Title</MudTd>
+            <MudTd DataLabel="Content">@context.Content</MudTd>
+            <MudTd DataLabel="Date">@context.AddedDate</MudTd>
+            <MudTd><MudButton Color="Color.Primary" Variant="Variant.Filled">View</MudButton></MudTd>
+
+            @if (context.ReadStatus == true)
+            {
+                <MudTd>
+                    <MudIconButton Disabled Color="Color.Primary" Icon="@(Icons.Material.Filled.MarkEmailRead)"></MudIconButton>
+                </MudTd>
+            }
+            else
+            {
+                <MudTd>
+                    <MudIconButton  OnClick="() => MarkAsRead(context.Id)" Color="Color.Success" Icon="@(Icons.Material.Filled.MarkEmailUnread)"></MudIconButton>
+                </MudTd>
+            }
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText>No matching records found</MudText>
+        </NoRecordsContent>
+        <LoadingContent>
+            <MudText>Loading...</MudText>
+        </LoadingContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+   
+</div>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+    private IEnumerable<NotificationResponseDTO> pagedData;
+    private MudTable<NotificationResponseDTO> table;
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
+    private int totalItems;
+    private string searchString = "";
+    private int totalUnreadItems=0;
+    private bool enableMarkAllAsReadBtn=false;
+
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    private async Task<TableData<NotificationResponseDTO>> ServerReload(TableState state)
+    {
+        var user = (await AuthenticationState).User;
+        var id = user?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+
+        NotificationRequestDTO notificationRequestDTO = new NotificationRequestDTO
+            {
+                ReceiverId = new Guid(id!),
+                SearchString = searchString
+            };
+
+        IEnumerable<NotificationResponseDTO> data = await notificationService.GetAllNotifications(notificationRequestDTO);
+        await Task.Delay(300);
+
+        data = data.Where(element =>
+        {
+            if (string.IsNullOrWhiteSpace(searchString))
+                return true;
+            if (element.Content.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if (element.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return false;
+        }).ToArray();
+
+        totalItems = data.Count();
+        totalUnreadItems = data.Where(x => x.ReadStatus == false).Count();
+        if (totalUnreadItems == 0)
+        {
+            enableMarkAllAsReadBtn = false;
+        }
+        else
+        {
+            enableMarkAllAsReadBtn = true;
+        }
+        switch (state.SortLabel)
+        {
+            case "nr_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Title);
+                break;
+            case "sign_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Content);
+                break;
+            case "name_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.AddedDate);
+                break;
+        }
+
+        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new TableData<NotificationResponseDTO> { TotalItems = totalItems, Items = pagedData };
+    }
+
+    private async Task OnSearch(string text)
+    {
+        searchString = text;
+        await table.ReloadServerData();
+    }
+
+    private async Task MarkAsRead(Guid id)
+    {
+        var result = await notificationService.MarkAsRead(id);
+
+        if (!result)
+        {
+            snackbar.Clear();
+            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+            snackbar.Add("Please try again", Severity.Error);
+        }
+    }
+
+    private async Task MarkAllAsRead()
+    {
+        var user = (await AuthenticationState).User;
+        var id = user?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        var result = await notificationService.MarkAllAsRead(new Guid(id!));
+
+        if (!result)
+        {
+            snackbar.Clear();
+            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+            snackbar.Add("Please try again", Severity.Error);
+        }
+    }
 }

@@ -10,6 +10,7 @@ using MudBlazorUI.Auth.Handler;
 using MudBlazorUI.Auth.Services;
 using Blazored.LocalStorage;
 using MudBlazorUI.Auth.Const;
+using MudBlazorUI.Notification_Service.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -29,13 +30,14 @@ builder.Services.AddMudServices(config =>
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddTransient<JwtAuthenticationHandler>();
-builder.Services.AddHttpClient("ServerApi", client => client.BaseAddress = new Uri("http://localhost:5261"))
+builder.Services.AddHttpClient("ServerApi", client => client.BaseAddress = new Uri("https://localhost:7111"))
                 .AddHttpMessageHandler<JwtAuthenticationHandler>();
 
 builder.Services.AddSingleton<IJwtAuthenticationService, JwtAuthenticationService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<IUserProfile, UserProfile>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredSessionStorageAsSingleton();
 builder.Services.AddBlazoredLocalStorageAsSingleton();

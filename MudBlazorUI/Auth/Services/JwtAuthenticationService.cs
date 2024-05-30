@@ -49,7 +49,7 @@ namespace MudBlazorUI.Auth.DTOs
         //Login User
         public async Task<AuthenticationResponseDTO?> LoginAsync(AuthenticationRequestDTO request)
         {
-            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("api/Account/Login", request);
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Account/Login", request);
             var content = await result.Content.ReadAsStringAsync();
 
             var response = JsonConvert.DeserializeObject<AuthenticationResponseDTO>(content);
@@ -73,7 +73,7 @@ namespace MudBlazorUI.Auth.DTOs
         //verify 2FA
         public async Task<AuthenticationResponseDTO?> TwoFactorVerify(TwoFAVerificatinRequestDTO request)
         {
-            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("/api/Account/2FAVerification", request);
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Account/2FAVerification", request);
             var content = await result.Content.ReadAsStringAsync();
 
             var response = JsonConvert.DeserializeObject<AuthenticationResponseDTO>(content);
@@ -98,7 +98,7 @@ namespace MudBlazorUI.Auth.DTOs
         public async Task<UserModelResponseDTO?> GetUserDetails()
         {
             
-            var result = await _factory.CreateClient("ServerApi").GetAsync("api/Account/Get-User-Details");
+            var result = await _factory.CreateClient("ServerApi").GetAsync("ApiGateWay/Auth-api/Account/Get-User-Details");
            
             if (result.IsSuccessStatusCode)
             {
@@ -122,7 +122,7 @@ namespace MudBlazorUI.Auth.DTOs
 
             if (!string.IsNullOrEmpty(request.RefreshToken)) {
 
-                var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("api/Account/Request-RefreshToken", request);
+                var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Account/Request-RefreshToken", request);
                 Console.WriteLine("refresh " + result.StatusCode);
 
                 if (result.IsSuccessStatusCode)
