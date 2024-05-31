@@ -15,7 +15,7 @@ namespace MudBlazorUI.Notification_Service.Services
         }
 
 
-        public async Task<IEnumerable<NotificationResponseDTO>> GetAllNotifications(NotificationRequestDTO notificationRequestDTO)
+        public async Task<IEnumerable<NotificationResponseDTO>?> GetAllNotifications(NotificationRequestDTO notificationRequestDTO)
         {
             var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Notification-Api/Notification/All-Notifications", notificationRequestDTO);
 
