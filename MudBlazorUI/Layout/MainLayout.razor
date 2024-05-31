@@ -37,14 +37,22 @@
             </NotAuthorized>
         </AuthorizeView>
 
-        <MudSwitch @bind-Checked="@themeOn" Color="Color.Inherit" OnCheckedChanged="@ToggleTheme()" ThumbIcon="@(themeOn==true ? Icons.Material.Sharp.DarkMode : Icons.Material.Sharp.LightMode)"
-                   ThumbIconColor="@(themeOn==true ? Color.Warning : Color.Warning)" />
-        <MudBadge Dot="true" Color="Color.Info"  Class="mx-6 my-4" Overlap="true">
-            <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Primary"
-                           OnClick="@((e) => OpenNotifications())" aria-label="notifications">
+        <MudTooltip Text="Theme">
+            <MudSwitch @bind-Checked="@themeOn" Color="Color.Inherit" OnCheckedChanged="@ToggleTheme()" ThumbIcon="@(themeOn==true ? Icons.Material.Sharp.DarkMode : Icons.Material.Sharp.LightMode)"
+                       ThumbIconColor="@(themeOn==true ? Color.Warning : Color.Warning)" />
+        </MudTooltip>
+       <AuthorizeView>
+           <Authorized>
+                <MudTooltip Text="Notifications">
+                    <MudBadge Dot="true" Color="Color.Info" Class="mx-6 my-4" Overlap="true">
+                        <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Primary"
+                                       OnClick="@((e) => OpenNotifications())" aria-label="notifications">
 
-            </MudIconButton>
-        </MudBadge>
+                        </MudIconButton>
+                    </MudBadge>
+                </MudTooltip>
+           </Authorized>
+       </AuthorizeView>
 
     </MudAppBar>
       

@@ -11,6 +11,7 @@ using MudBlazorUI.Auth.Services;
 using Blazored.LocalStorage;
 using MudBlazorUI.Auth.Const;
 using MudBlazorUI.Notification_Service.Services;
+using MudBlazorUI.Auth_Service.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -38,6 +39,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStat
 builder.Services.AddScoped<IUserProfile, UserProfile>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredSessionStorageAsSingleton();
 builder.Services.AddBlazoredLocalStorageAsSingleton();
