@@ -40,7 +40,7 @@
              <MudTd DataLabel="Date">@context.AddedDate</MudTd>
              <MudTd DataLabel="Content">@context.UpdateDate</MudTd>
              <MudTd DataLabel="Date">@context.TwoFactorEnabled</MudTd>
-             <MudTd><MudButton  Color="Color.Primary" Size="Size.Small" Variant="Variant.Filled">Edit</MudButton></MudTd>
+            <MudTd><MudButton OnClick="@(()=>OpenDialog(context))" Color="Color.Primary" Size="Size.Small" Variant="Variant.Filled">Edit</MudButton></MudTd>
 
         </RowTemplate>
         
@@ -57,6 +57,23 @@
 </div>
 
 
+<MudDialog @bind-IsVisible="visiblePersonalDialog" Options="dialogOptions">
+
+    <DialogContent>
+        <EditUser User="UserModelResponseDTO"></EditUser>
+        <div class="d-flex justify-content-end" style="display:flex;justify-content:end">
+
+            <MudButton OnClick="CloseDialog1" Color="Color.Primary">Close</MudButton>
+
+
+        </div>
+
+
+
+    </DialogContent>
+
+</MudDialog>
+
 
 
 @code {
@@ -70,7 +87,20 @@
     private int totalUnreadItems = 0;
     private bool enableMarkAllAsReadBtn = false;
 
+    //view Edit User
+    public UserModelResponseDTO UserModelResponseDTO { get; set; }
+    private bool visiblePersonalDialog = false;
+    void CloseDialog1() => visiblePersonalDialog = false;
+    private DialogOptions dialogOptions = new() { MaxWidth = MaxWidth.Small, FullWidth = true, CloseButton = true };
 
+
+    private  void OpenDialog(UserModelResponseDTO userModelResponseDTO)
+    {
+        UserModelResponseDTO = userModelResponseDTO;
+        visiblePersonalDialog = true;
+       
+
+    }
 
     protected override async Task OnInitializedAsync()
     {
