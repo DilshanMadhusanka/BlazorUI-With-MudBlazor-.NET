@@ -1,4 +1,5 @@
-﻿using MudBlazorUI.Core.DTOs.Response;
+﻿using MudBlazorUI.Auth_Service.DTOs.Request;
+using MudBlazorUI.Core.DTOs.Response;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 
@@ -28,6 +29,18 @@ namespace MudBlazorUI.Auth_Service.Services
             }
 
             else return null;
+        } 
+        public async Task<bool> Update(UpdateUserRequest updateUserRequest)
+        {
+
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Account/Update", updateUserRequest);
+            if (result.IsSuccessStatusCode)
+            {
+               return true;
+
+            }
+
+            else return false;
         }
     }
 }

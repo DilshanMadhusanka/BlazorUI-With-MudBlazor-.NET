@@ -1,0 +1,266 @@
+﻿@using FluentValidation
+@using MudBlazorUI.Auth_Service.DTOs.Request
+@using MudBlazorUI.Auth_Service.Services
+@using MudBlazorUI.Core.DTOs.Response
+@inject IAdminService adminService
+
+
+
+
+<MudCard Elevation="0">
+   
+    <MudFileUpload style="margin:10px " Accept=".png, .jpg ,.jpeg" T="IBrowserFile" OnFilesChanged="OnChange">
+       
+    </MudFileUpload>
+    <MudForm Model="@User" @ref="@form" Validation="@(userValidator.ValidateValue)" ValidationDelay="0">
+        <h1>User Information</h1>
+        <MudCardContent>
+            <MudTextField @bind-Value="User.Email"
+                          For="@(() => User.Email)"
+                          Immediate="true"
+                          Label="Email"
+                          Disabled="true" />
+            <MudSwitch @bind-Value="User.EmailConfirmed" Label="Email Confirm" Color="Color.Info">: @User.EmailConfirmed</MudSwitch>
+            <MudSwitch @bind-Value="User.TwoFactorEnabled" Label="TFA Enabled" Color="Color.Info">: @User.TwoFactorEnabled</MudSwitch>
+
+            <MudText Typo="Typo.caption">
+                The LockoutEnabled property indicates that the lockout is enabled for a user. If you set this property value to true, it does not mean that the user is locked out; it only means that the user could be locked out.
+
+            </MudText>
+            <MudSwitch @bind-Value="User.LockoutEnabled" Label="Lockout Enabled" Color="Color.Info">: @User.LockoutEnabled</MudSwitch>
+
+            @if (IsUserLocked)
+            {
+
+                <MudAlert Severity="MudBlazor.Severity.Error">This User is Locked</MudAlert>
+            }
+            else
+            {
+                <MudAlert Severity="MudBlazor.Severity.Success">This User is Not Locked yet</MudAlert>
+
+            }
+
+            <MudSelect T="string" Disabled="@(!User.LockoutEnabled)" @bind-Value="@LockoutEnd" Label="LockOut End" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+                <MudSelectItem Value="@("None")" />
+                <MudSelectItem Value="@("After 10 Minutes")" />
+                <MudSelectItem Value="@("After 1 Hour")" />
+                <MudSelectItem Value="@("After 1 Day")" />
+                <MudSelectItem Value="@("After 1 Month")" />
+                <MudSelectItem Value="@("Forever")" />
+
+
+            </MudSelect>
+            <MudText Typo="Typo.subtitle1">Lockout End at @CurrentEndTime Utc</MudText>
+
+            <MudText Typo="Typo.caption">
+                The LockoutEnd indicates when the lockout ends.
+                So, by using these the above properties together, you can lock out a user for a specific amount of time.
+
+            </MudText>
+
+
+        </MudCardContent>
+
+    </MudForm>
+    <MudCardActions>
+
+
+
+        <MudButton Disabled="@_processing" OnClick="@(async () => await Submit())" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">
+            @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Processing</MudText>
+            }
+            else
+            {
+                <MudText>Update</MudText>
+            }
+        </MudButton>
+    </MudCardActions>
+</MudCard>
+
+
+
+
+
+
+
+
+
+
+
+@code {
+
+
+
+
+    [Parameter]
+    public UserModelResponseDTO User { get; set; }
+    private bool _processing { get; set; } = false;
+
+
+    MudForm form;
+
+    OrderModelFluentValidator userValidator = new OrderModelFluentValidator();
+
+    public bool IsUserLocked { get; set; }
+    public DateTimeOffset? CurrentEndTime { get; set; }
+    public string LockoutEnd { get; set; } = string.Empty;
+
+
+    bool isChange=false;
+
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        if (User.LockoutEnd.HasValue && User.LockoutEnd.Value.UtcDateTime > DateTime.UtcNow)
+        {
+
+            IsUserLocked = true;
+        }
+    }
+
+
+    // get image
+    async Task OnChange(InputFileChangeEventArgs e)
+    {
+        isChange = true;
+
+    }
+
+
+
+
+    DateTimeOffset? setEndtime()
+    {
+        switch (LockoutEnd)
+        {
+            case "None":
+                return null;
+            case "After 10 Minutes":
+                return DateTimeOffset.Now.AddMinutes(10);
+
+            case "After 1 Hour":
+                return DateTimeOffset.Now.AddHours(1);
+
+            case "After 1 Day":
+                return DateTimeOffset.Now.AddDays(1);
+
+            case "After 1 Month":
+                return DateTimeOffset.Now.AddMonths(1);
+
+            case "Forever":
+                return DateTimeOffset.MaxValue;
+
+            default:
+                throw new ArgumentException("Invalid LockoutEnd value");
+        }
+    }
+
+
+
+
+
+
+    //Save User
+
+    private async Task Submit()
+    {
+       
+        _processing = true;
+
+        try
+        {
+            await form.Validate();
+
+            if (form.IsValid)
+            {
+                var updateUser = new UpdateUserRequest
+                {
+
+
+                    Id=User.Id,
+                    Email=User.Email,
+                    EmailConfirmed=User.EmailConfirmed,
+                    TwoFactorEnabled=User.TwoFactorEnabled,
+                    LockoutEnabled=User.LockoutEnabled,
+                    AccessFailedCount=User.AccessFailedCount,
+                    LockoutEnd=setEndtime()
+                };
+
+
+                var result =await adminService.Update(updateUser);
+                snackbar.Clear();
+                snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+                if (result)
+                {
+
+                    snackbar.Add("User Updated", MudBlazor.Severity.Success);
+                }
+                else
+                {
+
+                    snackbar.Add("Try Agin", MudBlazor.Severity.Error);
+
+                }
+
+                _processing = false;
+                await Task.Delay(2000);
+                NavigationManager.Refresh(forceReload:false);
+
+
+            }
+        }
+        catch
+        {
+
+        }
+        _processing = false;
+    }
+
+
+
+    //Validation
+
+    public class OrderModelFluentValidator : AbstractValidator<UserModelResponseDTO>
+    {
+        public OrderModelFluentValidator()
+        {
+            
+
+            RuleFor(x => x.Email)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .EmailAddress()
+                .MustAsync(async (value, cancellationToken) => await IsUniqueAsync(value));
+
+            
+
+        }
+
+        private async Task<bool> IsUniqueAsync(string email)
+        {
+            // Simulates a long running http call
+            await Task.Delay(2000);
+            return email.ToLower() != "test@test.com";
+        }
+
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+        {
+            var result = await ValidateAsync(ValidationContext<UserModelResponseDTO>.CreateWithOptions((UserModelResponseDTO)model, x => x.IncludeProperties(propertyName)));
+            if (result.IsValid)
+                return Array.Empty<string>();
+            return result.Errors.Select(e => e.ErrorMessage);
+        };
+    }
+
+
+
+
+
+
+}
