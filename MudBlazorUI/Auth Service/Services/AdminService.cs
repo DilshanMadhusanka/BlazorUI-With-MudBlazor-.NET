@@ -1,4 +1,5 @@
 ﻿using MudBlazorUI.Auth_Service.DTOs.Request;
+using MudBlazorUI.Auth_Service.DTOs.Response;
 using MudBlazorUI.Core.DTOs.Response;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
@@ -29,7 +30,24 @@ namespace MudBlazorUI.Auth_Service.Services
             }
 
             else return null;
-        } 
+        }
+
+        public async Task<IEnumerable<UserLoginDeviceInfoResponse>?> GetAllLoginDetails(string searchString)
+        {
+
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Admin/login-details", searchString);
+            if (result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+
+                var response = JsonConvert.DeserializeObject<IEnumerable<UserLoginDeviceInfoResponse>>(content);
+                return response;
+
+            }
+
+            else return null;
+        }
+
         public async Task<bool> Update(UpdateUserRequest updateUserRequest)
         {
 
@@ -41,6 +59,17 @@ namespace MudBlazorUI.Auth_Service.Services
             }
 
             else return false;
+        }
+        
+        public async Task<HttpResponseMessage> GetUserLockedStatus(string id)
+        {
+
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Admin/locked-status", id);
+            
+                return result;
+
+            
+
         }
     }
 }

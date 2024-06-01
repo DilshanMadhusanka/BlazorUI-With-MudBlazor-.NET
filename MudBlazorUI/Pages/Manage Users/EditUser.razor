@@ -2,6 +2,7 @@
 @using MudBlazorUI.Auth_Service.DTOs.Request
 @using MudBlazorUI.Auth_Service.Services
 @using MudBlazorUI.Core.DTOs.Response
+@using Newtonsoft.Json
 @inject IAdminService adminService
 
 
@@ -9,9 +10,7 @@
 
 <MudCard Elevation="0">
    
-    <MudFileUpload style="margin:10px " Accept=".png, .jpg ,.jpeg" T="IBrowserFile" OnFilesChanged="OnChange">
-       
-    </MudFileUpload>
+ 
     <MudForm Model="@User" @ref="@form" Validation="@(userValidator.ValidateValue)" ValidationDelay="0">
         <h1>User Information</h1>
         <MudCardContent>
@@ -50,7 +49,7 @@
 
 
             </MudSelect>
-            <MudText Typo="Typo.subtitle1">Lockout End at @CurrentEndTime Utc</MudText>
+             @if(User.LockoutEnd!=null) { <MudText Typo="Typo.subtitle1">Lockout End at @User.LockoutEnd Utc</MudText> }
 
             <MudText Typo="Typo.caption">
                 The LockoutEnd indicates when the lockout ends.
@@ -104,33 +103,41 @@
 
     OrderModelFluentValidator userValidator = new OrderModelFluentValidator();
 
-    public bool IsUserLocked { get; set; }
+    public bool  IsUserLocked { get; set; }
     public DateTimeOffset? CurrentEndTime { get; set; }
-    public string LockoutEnd { get; set; } = string.Empty;
+    public string ? LockoutEnd  { get; set; } = null;
 
 
     bool isChange=false;
 
+    private async Task GetUserLockedStatus(){
 
+        var result = await adminService.GetUserLockedStatus(User.Id);
+        if (result.IsSuccessStatusCode)
+        {
+
+            var content = await result.Content.ReadAsStringAsync();
+
+            var response = JsonConvert.DeserializeObject<bool>(content);
+            IsUserLocked = response ;
+            Console.WriteLine("statsu is "+IsUserLocked);
+        }
+        else
+        {
+
+        }
+
+    }
 
 
     protected override async Task OnInitializedAsync()
     {
+        await GetUserLockedStatus();
 
-        if (User.LockoutEnd.HasValue && User.LockoutEnd.Value.UtcDateTime > DateTime.UtcNow)
-        {
-
-            IsUserLocked = true;
-        }
+       
     }
 
 
-    // get image
-    async Task OnChange(InputFileChangeEventArgs e)
-    {
-        isChange = true;
-
-    }
 
 
 
@@ -170,7 +177,7 @@
 
     private async Task Submit()
     {
-       
+
         _processing = true;
 
         try
@@ -189,8 +196,12 @@
                     TwoFactorEnabled=User.TwoFactorEnabled,
                     LockoutEnabled=User.LockoutEnabled,
                     AccessFailedCount=User.AccessFailedCount,
-                    LockoutEnd=setEndtime()
+                    LockoutEnd=User.LockoutEnd
                 };
+                if (LockoutEnd != null)
+                {
+                    updateUser.LockoutEnd = User.LockoutEnd= setEndtime();
+                }
 
 
                 var result =await adminService.Update(updateUser);
@@ -204,13 +215,14 @@
                 else
                 {
 
-                    snackbar.Add("Try Agin", MudBlazor.Severity.Error);
+                    snackbar.Add("Try Again", MudBlazor.Severity.Error);
 
                 }
 
                 _processing = false;
-                await Task.Delay(2000);
-                NavigationManager.Refresh(forceReload:false);
+                StateHasChanged();
+                await GetUserLockedStatus();
+                
 
 
             }

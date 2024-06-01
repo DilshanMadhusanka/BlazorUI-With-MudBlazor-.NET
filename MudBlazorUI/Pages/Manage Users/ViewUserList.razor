@@ -90,7 +90,11 @@
     //view Edit User
     public UserModelResponseDTO UserModelResponseDTO { get; set; }
     private bool visiblePersonalDialog = false;
-    void CloseDialog1() => visiblePersonalDialog = false;
+    async void CloseDialog1() {
+        visiblePersonalDialog = false;
+        await table.ReloadServerData();
+
+    }
     private DialogOptions dialogOptions = new() { MaxWidth = MaxWidth.Small, FullWidth = true, CloseButton = true };
 
 
@@ -98,7 +102,7 @@
     {
         UserModelResponseDTO = userModelResponseDTO;
         visiblePersonalDialog = true;
-       
+
 
     }
 
