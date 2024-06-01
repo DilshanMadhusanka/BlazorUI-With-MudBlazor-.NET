@@ -1,28 +1,47 @@
 ﻿@page "/admin"
-@using MudBlazorUI.Components.AdminDashboard
-@layout NoNavLayout
+@using MudBlazor
 
 
 <MudLayout>
-    <MudAppBar Color="Color.Primary">
-        <MudText Typo="Typo.h6" Class="mx-2">Employee Management</MudText>
+    <MudAppBar Elevation="1" Dense="@dense">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
     </MudAppBar>
-
-    <MudDrawer Open="true" Variant="DrawerVariant.Temporary" Elevation="1">
+    <MudDrawer @bind-Open="@open" ClipMode="clipMode" Breakpoint="@breakpoint" PreserveOpenState="@preserveOpenState" Elevation="1" Variant="@DrawerVariant.Mini">
         <MudNavMenu>
-            <MudNavLink Href="/home" Match="NavLinkMatch.All">
-                Home
-            </MudNavLink>
-            <MudNavLink Href="/department">
-                Department
-            </MudNavLink>
-            <MudNavLink Href="/employee">
-                Employee
-            </MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Store">Store</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.LibraryBooks">Library</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Group">Community</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
-
-    <MudMainContent>
-       
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Class="mt-6">
+            <MudSelect Label="Select clip mode" @bind-Value="clipMode">
+                <MudSelectItem Value="@DrawerClipMode.Never">Not clipped (DrawerClipMode.Never)</MudSelectItem>
+                <MudSelectItem Value="@DrawerClipMode.Docked">Drawer is docked (DrawerClipMode.Docked)</MudSelectItem>
+                <MudSelectItem Value="@DrawerClipMode.Always">Always (DrawerClipMode.Always)</MudSelectItem>
+            </MudSelect>
+            <MudSelect Label="Select breakpoint" @bind-Value="breakpoint">
+                <MudSelectItem Value="@Breakpoint.Sm">Breakpoint.Sm</MudSelectItem>
+                <MudSelectItem Value="@Breakpoint.Md">Breakpoint.Md</MudSelectItem>
+                <MudSelectItem Value="@Breakpoint.Lg">Breakpoint.Lg</MudSelectItem>
+                <MudSelectItem Value="@Breakpoint.Xl">Breakpoint.Xl</MudSelectItem>
+            </MudSelect>
+            <MudSwitch @bind-Checked="@preserveOpenState" Label="Preserve open state" Color="Color.Primary" Style="width:100%;" />
+            <MudSwitch @bind-Checked="@dense" Label="Dense appbar" Color="Color.Primary" Style="width:100%;" />
+        </MudContainer>
     </MudMainContent>
 </MudLayout>
+@code {
+    bool open = false;
+    bool dense = false;
+    bool preserveOpenState = false;
+    Breakpoint breakpoint = Breakpoint.Lg;
+    DrawerClipMode clipMode = DrawerClipMode.Never;
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+}
