@@ -1,0 +1,55 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="2">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6" Class="px-4">Admin Panel</MudText>
+
+            <!-- <MudText Typo="Typo.h5" Class="mt-1">Application</MudText>  -->
+        </MudDrawerHeader>
+
+       <!-- Nav menu -->
+        <MudPaper Width="250px" Class="d-inline-flex py-3" Elevation="0">
+            <MudNavMenu Class="mud-width-full">
+                <MudText Typo="Typo.h6" Class="px-4">Admin Panel</MudText>
+             
+                <MudDivider Class="my-2" />
+                <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+                <MudNavLink Href="/servers" Icon="@Icons.Material.Filled.Storage">User Management</MudNavLink>
+                <MudNavLink Href="/servers" Icon="@Icons.Material.Filled.Storage">Activities</MudNavLink>
+                <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" Expanded="true">
+                    <MudNavLink Href="/users" Icon="@Icons.Material.Filled.People" IconColor="Color.Success">Backup</MudNavLink>
+                    <MudNavLink Href="/security" Icon="@Icons.Material.Filled.Security" IconColor="Color.Info">Security</MudNavLink>
+                </MudNavGroup>
+                <MudNavLink Href="/servers" Icon="@Icons.Material.Filled.Storage">Request</MudNavLink>
+                <MudNavLink Href="/servers" Icon="@Icons.Material.Filled.Storage">LogOut</MudNavLink>
+            </MudNavMenu>
+        </MudPaper>
+
+
+
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+
+@code {
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}
