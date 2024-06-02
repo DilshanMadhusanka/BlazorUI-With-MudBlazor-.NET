@@ -24,9 +24,11 @@
 
        
         <HeaderContent >
-            <MudTh><MudTableSortLabel SortLabel="nr_field" T="UserLoginDeviceInfoResponse">Ip</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="nr_field" T="UserLoginDeviceInfoResponse">Email</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="ip_field" T="UserLoginDeviceInfoResponse">Ip</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortLabel="sign_field" T="UserLoginDeviceInfoResponse">UserAgent</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortLabel="name_field" T="UserLoginDeviceInfoResponse">LoginDate</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel  T="UserLoginDeviceInfoResponse">View</MudTableSortLabel></MudTh>
             
             
             
@@ -35,9 +37,12 @@
 
           
 
+            <MudTd DataLabel="IP">@context.Email</MudTd>
             <MudTd DataLabel="IP">@context.IP</MudTd>
             <MudTd DataLabel="Det">@context.UserAgentDetails</MudTd>
             <MudTd DataLabel="Date">@context.LoginDate</MudTd>
+            <MudTd><MudButton OnClick="@(()=>OpenDialog(context))" Size="Size.Small" Color="Color.Primary" Variant="Variant.Filled">View</MudButton></MudTd>
+
             
             
             
@@ -56,19 +61,56 @@
 </div>
 
 
+<MudDialog @bind-IsVisible="visiblePersonalDialog" Options="dialogOptions">
+
+    <DialogContent>
+
+        <MudText Typo="Typo.h6">Device Information </MudText>
+        <MudText>Browser Name     : @userAgentDetailsDTO.BrowserName</MudText>
+        <MudText>Browser Version  :@userAgentDetailsDTO.BrowserVersion</MudText>
+        <MudText>Operating System :@userAgentDetailsDTO.OperatingSystem</MudText>
+        <MudText>Device           :@userAgentDetailsDTO.DeviceType</MudText>
+       
+        
+        <div class="d-flex justify-content-end" style="display:flex;justify-content:end">
+        
+            <MudButton OnClick="CloseDialog1" Color="Color.Primary">Close</MudButton>
+
+
+        </div>
+
+
+
+    </DialogContent>
+
+</MudDialog>
 
 
 
 @code {
     private IEnumerable<UserLoginDeviceInfoResponse> pagedData;
     private MudTable<UserLoginDeviceInfoResponse> table;
-    private UserAgentDetailsDTO userAgentDetailsDTO;
+    
 
     private int totalItems;
     private string searchString = "";
-  
 
+
+    //view Notification Dialog
     
+    private UserAgentDetailsDTO userAgentDetailsDTO { get; set; }
+    private bool visiblePersonalDialog = false;
+    void CloseDialog1() => visiblePersonalDialog = false;
+    private DialogOptions dialogOptions = new() { MaxWidth = MaxWidth.Small, FullWidth = true, CloseButton = true };
+
+
+    private async void OpenDialog(UserLoginDeviceInfoResponse userLoginDeviceInfo)
+    {
+        userAgentDetailsDTO=UserAgentDetailsDTO.GetBrowser(userLoginDeviceInfo.UserAgentDetails);
+        visiblePersonalDialog = true;
+       
+
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -79,20 +121,20 @@
 
     private async Task<TableData<UserLoginDeviceInfoResponse>> ServerReload(TableState state)
     {
-        
-
 
 
         IEnumerable<UserLoginDeviceInfoResponse>? data = await adminService.GetAllLoginDetails(searchString);
         await Task.Delay(300);
         if (data == null)
         {
-            
+
         }
 
         data = data.Where(element =>
         {
             if (string.IsNullOrWhiteSpace(searchString))
+                return true;
+            if (element.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                 return true;
             if (element.IP.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                 return true;
@@ -103,11 +145,14 @@
         }).ToArray();
 
         totalItems = data.Count();
-        
+
 
         switch (state.SortLabel)
         {
             case "nr_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Email);
+                break;
+            case "ip_field":
                 data = data.OrderByDirection(state.SortDirection, o => o.IP);
                 break;
             case "sign_field":

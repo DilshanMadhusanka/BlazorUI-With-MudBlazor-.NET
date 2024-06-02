@@ -4,6 +4,8 @@
     {
         public Guid UserId { get; set; }
 
+        public string Email { get; set; }
+
         public string? UserAgentDetails { get; set; }
 
         public DateTime LoginDate { get; set; } = DateTime.Now;
