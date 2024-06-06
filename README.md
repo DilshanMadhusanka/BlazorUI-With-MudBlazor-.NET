@@ -1,15 +1,31 @@
-# Blazor .NET 8 Project with MudBlazor
+# Admin Portal for Faculty ERP System
 
-## Introduction
-This project is a Blazor application built using .NET 8 and MudBlazor. 
+This repository contains the Admin Portal for the Faculty ERP System, built using Blazor .NET 8 and MudBlazor. The system follows a microservices architecture to ensure scalability and maintainability.
 
-## Prerequisites
-Before running this project, ensure you have the following installed:
-- .NET 8 SDK or higher
-- Visual Studio 2019 or Visual Studio Code
-- Git (optional but recommended for version control)
-
+## Technologies Used
+- Blazor .NET 8: For building the interactive web UI
+- MudBlazor: For rich UI components and styling
+- Microservices Architecture: For modular and scalable system design
+  
+## Features
+- User Management: Manage users with roles and permissions
+- Settings: Configure system settings and preferences
+- Profile Management: Admin profile and information management
+- Notifications: Customize and manage notifications
+- Reports & Analytics: View and analyze system usage data
+  
 ## Getting Started
-1. Clone this repository to your local machine using Git:
-   ```bash
-   git clone https:https://github.com/DilshanMadhusanka/BlazorUI-With-MudBlazor-.NET.git
+1 Clone the repository
+- git clone https://github.com/DilshanMadhusanka/ERP-System-AdminPortal.git
+  
+2 Navigate to the project directory
+
+3 Build and run the application
+- dotnet build
+- dotnet run
+  
+## Contributing
+We welcome contributions to enhance the functionality and performance of the admin portal. Please follow the standard guidelines for pull requests and issues.
+
+
+
