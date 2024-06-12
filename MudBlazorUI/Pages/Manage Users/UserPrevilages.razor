@@ -1,0 +1,242 @@
+﻿@using FluentValidation
+@using MudBlazorUI.Auth_Service.DTOs.Request
+@using MudBlazorUI.Auth_Service.Services
+@using MudBlazorUI.Core.DTOs.Request
+@using MudBlazorUI.Core.DTOs.Response
+@using Newtonsoft.Json
+@inject IAdminService adminService
+
+
+
+
+<MudCard Elevation="0">
+   
+ 
+      <MudCardContent>
+            <MudText Typo="Typo.h6"> User Role</MudText>
+
+
+
+            User Role is
+           
+                <MudElement HtmlTag="a"
+                            Class="ms-1"
+                            Style="color:red;font-weight:bold;">
+                    @Role,
+                </MudElement>
+
+
+
+        <MudSelect T="string" @bind-Value="@NewRole" Label="Change Role" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+                <MudSelectItem Value="@("Admin")" />
+                <MudSelectItem Value="@("Staff")" />
+                <MudSelectItem Value="@("Lecture")" />
+            <MudSelectItem Value="@("Reguler")" />
+            </MudSelect>
+
+            </MudCardContent>
+          
+
+
+
+
+    
+    <MudCardActions>
+
+
+
+        <MudButton Disabled="@_processing" OnClick="@(async () => await Submit())" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">
+            @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Processing</MudText>
+            }
+            else
+            {
+                <MudText>Update</MudText>
+            }
+        </MudButton>
+    </MudCardActions>
+</MudCard>
+
+
+
+
+
+
+
+
+
+
+
+@code {
+
+
+
+
+    [Parameter]
+    public UserModelResponseDTO User { get; set; }
+    private bool _processing { get; set; } = false;
+
+
+
+    OrderModelFluentValidator userValidator = new OrderModelFluentValidator();
+
+
+
+    public string Role { get; set; } = string.Empty;
+    public string NewRole { get; set; } = string.Empty;
+
+
+
+
+    bool isChange=false;
+
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        snackbar.Clear();
+        snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+        try
+        {
+            var result = await adminService.GetUserRole(User.Id);
+            if (result.IsSuccessStatusCode)
+            {
+                NewRole=Role = await result.Content.ReadAsStringAsync();
+
+            }
+            else
+            {
+                snackbar.Add("Something is wrong ", MudBlazor.Severity.Error);
+            }
+        }
+        catch
+        {
+            NavigationManager.NavigateTo("/Server-Error");
+
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+    private async Task<HttpResponseMessage> Update()
+    {
+        try
+        {
+            AssignRoleRequestDTO assignRoleRequestDTO = new AssignRoleRequestDTO
+            {
+            Role=NewRole,
+            UserEmail = User.Email
+            };
+            var result = await adminService.UpdateRole(assignRoleRequestDTO);
+            return result;
+        }
+        catch
+        {
+            NavigationManager.NavigateTo("/Server-Error");
+            throw new Exception("Server Error");
+
+        }
+    }
+
+
+    //Save User
+
+    private async Task Submit()
+    {
+
+        _processing = true;
+        if (Role == NewRole)
+        {
+            _processing = false;
+
+            return;
+        }
+
+        try
+        {
+
+
+
+                var result = await Update();
+
+               
+                if (result.IsSuccessStatusCode)
+                {
+
+                    snackbar.Add("User Updated", MudBlazor.Severity.Success);
+                }
+                else
+                {
+
+                    snackbar.Add("Try Again", MudBlazor.Severity.Error);
+
+                }
+
+                _processing = false;
+                StateHasChanged();
+                
+
+
+            
+        }
+        catch
+        {
+
+        }
+        _processing = false;
+    }
+
+
+
+    //Validation
+
+    public class OrderModelFluentValidator : AbstractValidator<UserModelResponseDTO>
+    {
+        public OrderModelFluentValidator()
+        {
+            
+
+            RuleFor(x => x.Email)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .EmailAddress()
+                .MustAsync(async (value, cancellationToken) => await IsUniqueAsync(value));
+
+            
+
+        }
+
+        private async Task<bool> IsUniqueAsync(string email)
+        {
+            // Simulates a long running http call
+            await Task.Delay(2000);
+            return email.ToLower() != "test@test.com";
+        }
+
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+        {
+            var result = await ValidateAsync(ValidationContext<UserModelResponseDTO>.CreateWithOptions((UserModelResponseDTO)model, x => x.IncludeProperties(propertyName)));
+            if (result.IsValid)
+                return Array.Empty<string>();
+            return result.Errors.Select(e => e.ErrorMessage);
+        };
+    }
+
+
+
+
+
+
+}

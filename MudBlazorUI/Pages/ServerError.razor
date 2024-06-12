@@ -1,0 +1,47 @@
+@page "/Server-Error"
+@layout NoNavLayout
+@using Blazored.SessionStorage
+@using MudBlazor
+@using System.ComponentModel.DataAnnotations
+@using MudBlazorUI.Auth.Services
+@using MudBlazorUI.Core.DTOs.Request
+
+
+
+
+<div class="page">
+    <MudLayout>
+        <div style="background-image: url('Assets/background-login.png'); background-size: cover; background-position: center; height: 430px; width: 100%; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%;margin-top: -60px; height: 100%; display: flex; justify-content: center; align-items: center;">
+                <MudImage Src="Assets/image3.png" Alt="UOR" Width="80" Height="100" Elevation="30" Class="rounded-lg" />
+                <div style="display: flex; flex-direction: column; align-items: center; padding-left: 20px; padding-right: 20px;">
+                    <MudText Typo="Typo.h4" Class="pa-2" Style="@($"color:{Colors.Grey.Lighten5}; font-weight: bold;")">FACULTY OF ENGINEERING</MudText>
+                    <MudText Typo="Typo.h5" Class="pa-2" Style="@($"color:{Colors.Grey.Lighten5}; font-weight: bold;")">UNIVERSITY OF RUHUNA</MudText>
+                </div>
+                <MudImage Src="Assets/image2.png" Alt="UOR" Width="80" Height="100" Elevation="30" Class="rounded-lg" />
+            </div>
+        </div>
+        <div style="display: flex; justify-content: center; position: relative; margin-top: -20px; margin-bottom: 120px; margin-left: -90px;">
+            
+              
+                <MudGrid Justify="Justify.Center" Class="mt-n10 pa-20">
+                    <MudItem Class="mx-auto">
+                        <MudCard Outlined="true" Style="border-radius: 10px; width: 140%; mx-auto;">
+                            <MudCardContent  Style="height:200px;" Class="pa-20">
+                            <MudText Align="Align.Center" Style="@($"color:{Colors.Red.Darken4}; padding-top: 5px;")" Typo="Typo.h4">
+                                    <span style="font-weight: bold; font-family: 'Inter'; font-size: 22px;">Server Error</span>
+                                </MudText>
+                                
+                              </MudCardContent>
+                             
+                        </MudCard>
+                    </MudItem>
+                </MudGrid>
+           
+        </div>
+    </MudLayout>
+</div>
+
+@code {
+    
+}

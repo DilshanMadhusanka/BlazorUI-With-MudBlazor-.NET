@@ -9,8 +9,8 @@
 
 @attribute [Authorize]
 
-<div style="height:100%;margin:80px 40px 10px 40px;">
-    <MudTable Height="70vh" Elevation="1" ServerData="@(new Func<TableState, Task<TableData<UserModelResponseDTO>>>(ServerReload))"
+<div style="height:100%;margin:80px 0px 0px 0px;">
+    <MudTable Height="70vh" Elevation="0" ServerData="@(new Func<TableState, Task<TableData<UserModelResponseDTO>>>(ServerReload))"
               Dense="true" Hover="true" @ref="table">
 
         <ToolBarContent>
@@ -29,6 +29,7 @@
             <MudTh><MudTableSortLabel SortLabel="name_field" T="UserModelResponseDTO">Last Updated</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortLabel="name_field" T="UserModelResponseDTO">2FA Enabled</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortLabel="name_field" T="UserModelResponseDTO">Edit</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="name_field" T="UserModelResponseDTO">Previlage</MudTableSortLabel></MudTh>
             
             
         </HeaderContent>
@@ -40,7 +41,8 @@
              <MudTd DataLabel="Date">@context.AddedDate</MudTd>
              <MudTd DataLabel="Content">@context.UpdateDate</MudTd>
              <MudTd DataLabel="Date">@context.TwoFactorEnabled</MudTd>
-            <MudTd><MudButton OnClick="@(()=>OpenDialog(context))" Color="Color.Primary" Size="Size.Small" Variant="Variant.Filled">Edit</MudButton></MudTd>
+            <MudTd><MudButton OnClick="@(()=>OpenEditDetailsDialog(context))" Color="Color.Primary" Size="Size.Small" Variant="Variant.Filled">Edit</MudButton></MudTd>
+            <MudTd><MudButton OnClick="@(()=>OpenPrevilageDetailsDialog(context))" Color="Color.Primary" Size="Size.Small" Variant="Variant.Filled">Previlage</MudButton></MudTd>
 
         </RowTemplate>
         
@@ -57,13 +59,30 @@
 </div>
 
 
-<MudDialog @bind-IsVisible="visiblePersonalDialog" Options="dialogOptions">
+<MudDialog @bind-IsVisible="visibleEditDetailsDialog" Options="dialogOptions">
 
     <DialogContent>
         <EditUser User="UserModelResponseDTO"></EditUser>
         <div class="d-flex justify-content-end" style="display:flex;justify-content:end">
 
-            <MudButton OnClick="CloseDialog1" Color="Color.Primary">Close</MudButton>
+            <MudButton OnClick="CloseEditDetailsDialog" Color="Color.Primary">Close</MudButton>
+
+
+        </div>
+
+
+
+    </DialogContent>
+
+</MudDialog>
+
+<MudDialog @bind-IsVisible="visiblePrevilageDetailsDialog" Options="dialogOptions">
+
+    <DialogContent>
+        <UserPrevilages User="UserModelResponseDTO"></UserPrevilages>
+        <div class="d-flex justify-content-end" style="display:flex;justify-content:end">
+
+            <MudButton OnClick="ClosePrevilageDetailsDialog" Color="Color.Primary">Close</MudButton>
 
 
         </div>
@@ -89,16 +108,34 @@
 
     //view Edit User
     public UserModelResponseDTO UserModelResponseDTO { get; set; }
-    private bool visiblePersonalDialog = false;
-    void CloseDialog1() => visiblePersonalDialog = false;
+    private bool visibleEditDetailsDialog = false;
+    private bool visiblePrevilageDetailsDialog = false;
+    async void CloseEditDetailsDialog() {
+        visibleEditDetailsDialog = false;
+        await table.ReloadServerData();
+
+    }
+    async void ClosePrevilageDetailsDialog() {
+        visiblePrevilageDetailsDialog = false;
+        await table.ReloadServerData();
+
+    }
     private DialogOptions dialogOptions = new() { MaxWidth = MaxWidth.Small, FullWidth = true, CloseButton = true };
 
 
-    private  void OpenDialog(UserModelResponseDTO userModelResponseDTO)
+    private  void OpenEditDetailsDialog(UserModelResponseDTO userModelResponseDTO)
     {
         UserModelResponseDTO = userModelResponseDTO;
-        visiblePersonalDialog = true;
-       
+        visibleEditDetailsDialog = true;
+
+
+    } 
+    
+    private  void OpenPrevilageDetailsDialog(UserModelResponseDTO userModelResponseDTO)
+    {
+        UserModelResponseDTO = userModelResponseDTO;
+        visiblePrevilageDetailsDialog = true;
+
 
     }
 
@@ -111,48 +148,59 @@
 
     private async Task<TableData<UserModelResponseDTO>> ServerReload(TableState state)
     {
-        var user = (await AuthenticationState).User;
-        var id = user?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-
-
-
-        IEnumerable<UserModelResponseDTO> ? data = await adminService.GetAllUsersDetaiils(searchString);
-        await Task.Delay(300);
-        if (data == null)
+        try
         {
+            var user = (await AuthenticationState).User;
+            var id = user?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+
+
+            IEnumerable<UserModelResponseDTO>? data = await adminService.GetAllUsersDetaiils(searchString) ;
+            await Task.Delay(300);
+            if (data == null)
+            {
+                NavigationManager.NavigateTo("Server-Error");
+                data = [];
+            }
+           
+            data = data.Where(element =>
+            {
+                if (string.IsNullOrWhiteSpace(searchString))
+                    return true;
+                if (element.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                if (element.UserName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
+
+                return false;
+            }).ToArray();
+
+            totalItems = data.Count();
+
+
+            switch (state.SortLabel)
+            {
+                case "nr_field":
+                    data = data.OrderByDirection(state.SortDirection, o => o.Email);
+                    break;
+                case "sign_field":
+                    data = data.OrderByDirection(state.SortDirection, o => o.EmailConfirmed);
+                    break;
+                case "name_field":
+                    data = data.OrderByDirection(state.SortDirection, o => o.AddedDate);
+                    break;
+            }
+
+            pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+            return new TableData<UserModelResponseDTO> { TotalItems = totalItems, Items = pagedData };
+        }
+        catch
+        {
+            NavigationManager.NavigateTo("Server-Error");
             
+            throw new Exception("Server Error");
+
         }
-
-        data = data.Where(element =>
-        {
-            if (string.IsNullOrWhiteSpace(searchString))
-                return true;
-            if (element.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            if (element.UserName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-
-            return false;
-        }).ToArray();
-
-        totalItems = data.Count();
-        
-
-        switch (state.SortLabel)
-        {
-            case "nr_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Email);
-                break;
-            case "sign_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.EmailConfirmed);
-                break;
-            case "name_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.AddedDate);
-                break;
-        }
-
-        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
-        return new TableData<UserModelResponseDTO> { TotalItems = totalItems, Items = pagedData };
     }
 
     private async Task OnSearch(string text)
