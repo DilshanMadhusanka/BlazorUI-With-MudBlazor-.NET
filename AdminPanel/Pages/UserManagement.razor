@@ -1,0 +1,59 @@
+﻿@page "/UserManagement"
+@using AdminPanel.Pages.PopUpWindows
+@inherits MainLayout
+@inject IDialogService DialogService
+
+
+
+
+<MudSimpleTable Style="overflow-x: auto;">
+    <thead>
+        <tr>
+            @foreach (var h in headings)
+            {
+                <th>@h</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in rows)
+        {
+            <tr>
+                @foreach (var x in row.Split())
+                {
+                    <td>@x</td>
+                }
+            </tr>
+        }
+    </tbody>
+</MudSimpleTable>
+@code {
+    string[] headings = { "ID", "Name", "Email", "Gender","User Role", "Phone Number" };
+    string[] rows = {
+        @"1 Krishna kpartner0@usatoday.com Male Lecture 28.25.250.202",
+        @"2 Webb wstitle1@ning.com Male student 237.168.134.114",
+        @"3 Nathanil nneal2@cyberchimps.com Male Admin 92.6.0.175",
+        @"4 Adara alockwood3@patch.com Female Lecture 182.174.217.152",
+        @"5 Cecilius cchaplin4@shinystat.com Male Staff 195.124.144.18",
+        @"6 Cicely cemerine9@soup.io Female Accedamic 138.94.191.43",
+    };
+
+
+    @* popup windwo *@
+
+    private void OpenDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<AddUserPopUP>("Simple Dialog", options);
+        
+    }
+  
+}
+
+
+<div style="display: flex; justify-content: center; gap: 10px; margin-top: 30px;">
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" @onclick="OpenDialog">Add User</MudButton>
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Update" Color="Color.Tertiary" @onclick="OpenDialog">Update User</MudButton>
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="OpenDialog">Delete User</MudButton>
+</div>
+

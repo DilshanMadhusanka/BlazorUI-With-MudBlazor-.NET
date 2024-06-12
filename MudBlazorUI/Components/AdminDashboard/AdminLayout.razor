@@ -1,0 +1,35 @@
+﻿@page "/admin"
+@inherits LayoutComponentBase
+
+
+
+<MudLayout>
+    <MudAppBar Elevation="1" Dense="@dense">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="@open" ClipMode="clipMode" Breakpoint="@breakpoint" PreserveOpenState="@preserveOpenState" Elevation="1" Variant="@DrawerVariant.Mini">
+        <MudNavMenu>
+            <MudNavLink Href="store" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Store">Store</MudNavLink>
+            <MudNavLink Href="library" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.LibraryBooks">Library</MudNavLink>
+            <MudNavLink Href="community" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Group">Community</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent Class="pt-16 px-16">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    bool open = false;
+    bool dense = false;
+    bool preserveOpenState = false;
+    Breakpoint breakpoint = Breakpoint.Lg;
+    DrawerClipMode clipMode = DrawerClipMode.Never;
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+}
