@@ -1,5 +1,6 @@
 ﻿using MudBlazorUI.Auth_Service.DTOs.Request;
 using MudBlazorUI.Auth_Service.DTOs.Response;
+using MudBlazorUI.Core.DTOs.Request;
 using MudBlazorUI.Core.DTOs.Response;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
@@ -69,6 +70,26 @@ namespace MudBlazorUI.Auth_Service.Services
                 return result;
 
             
+
+        }
+
+        public async Task<HttpResponseMessage> GetUserRole(string id)
+        {
+
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Admin/get-Roles", id);
+
+            return result;
+
+
+
+        }
+
+        public async Task<HttpResponseMessage> UpdateRole(AssignRoleRequestDTO assignRoleRequestDTO)
+        {
+
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Admin/Assign-Role", assignRoleRequestDTO);
+
+            return result;
 
         }
     }

@@ -58,7 +58,13 @@
             </MudText>
 
 
-        </MudCardContent>
+            
+
+            </MudCardContent>
+          
+
+
+
 
     </MudForm>
     <MudCardActions>
@@ -106,6 +112,10 @@
     public bool  IsUserLocked { get; set; }
     public DateTimeOffset? CurrentEndTime { get; set; }
     public string ? LockoutEnd  { get; set; } = null;
+    public List<string>? Roles { get; set; } = new List<string>();
+    public string Role { get; set; } = string.Empty;
+
+
 
 
     bool isChange=false;

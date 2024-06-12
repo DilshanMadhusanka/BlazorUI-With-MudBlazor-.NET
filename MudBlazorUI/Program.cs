@@ -31,8 +31,15 @@ builder.Services.AddMudServices(config =>
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddTransient<JwtAuthenticationHandler>();
-builder.Services.AddHttpClient("ServerApi", client => client.BaseAddress = new Uri("https://localhost:7111"))
-                .AddHttpMessageHandler<JwtAuthenticationHandler>();
+builder.Services.AddHttpClient("ServerApi", client =>{ 
+    
+    client.BaseAddress = new Uri("https://localhost:7111"); 
+    client.Timeout = TimeSpan.FromSeconds(30);
+})
+   .AddHttpMessageHandler<JwtAuthenticationHandler>();
+
+
+
 
 builder.Services.AddSingleton<IJwtAuthenticationService, JwtAuthenticationService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();

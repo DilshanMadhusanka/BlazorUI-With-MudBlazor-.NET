@@ -106,14 +106,14 @@
 @code {
     [CascadingParameter]
     public Task<AuthenticationState> AuthenticationState { get; set; }
-    private IEnumerable<NotificationResponseDTO> pagedData;
-    private MudTable<NotificationResponseDTO> table;
+    private IEnumerable<NotificationResponseDTO> pagedData =[];
+    private MudTable<NotificationResponseDTO> table = new MudTable<NotificationResponseDTO>();
 
     private int totalItems;
     private string searchString = "";
     private int totalUnreadItems = 0;
     private bool enableMarkAllAsReadBtn = false;
-    
+
 
     //view Notification Dialog
     public NotificationResponseDTO NotificationViewModel { get; set; } 
@@ -140,49 +140,67 @@
 
     private async Task<TableData<NotificationResponseDTO>> ServerReload(TableState state)
     {
-        var user = (await AuthenticationState).User;
-        var id = user?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        try
+        {
 
-        NotificationRequestDTO notificationRequestDTO = new NotificationRequestDTO
+
+            var user = (await AuthenticationState).User;
+            var id = user?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            NotificationRequestDTO notificationRequestDTO = new NotificationRequestDTO
+                {
+                    ReceiverId = new Guid(id!),
+                    SearchString = searchString
+                };
+
+            IEnumerable<NotificationResponseDTO> data = await notificationService.GetAllNotifications(notificationRequestDTO) ;
+            await Task.Delay(300);
+            if (data == null)
             {
-                ReceiverId = new Guid(id!),
-                SearchString = searchString
-            };
+                NavigationManager.NavigateTo("Server-Error");
+                data = [];
+            }
 
-        IEnumerable<NotificationResponseDTO> data = await notificationService.GetAllNotifications(notificationRequestDTO);
-        await Task.Delay(300);
+            data = data.Where(element =>
+            {
+                if (string.IsNullOrWhiteSpace(searchString))
+                    return true;
+                if (element.Content.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                if (element.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
 
-        data = data.Where(element =>
+                return false;
+            }).ToArray();
+
+            totalItems = data.Count();
+            totalUnreadItems = data.Count(x => !x.ReadStatus);
+            enableMarkAllAsReadBtn = totalUnreadItems > 0;
+
+            switch (state.SortLabel)
+            {
+                case "nr_field":
+                    data = data.OrderByDirection(state.SortDirection, o => o.Title);
+                    break;
+                case "sign_field":
+                    data = data.OrderByDirection(state.SortDirection, o => o.Content);
+                    break;
+                case "name_field":
+                    data = data.OrderByDirection(state.SortDirection, o => o.AddedDate);
+                    break;
+            }
+
+            pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+            return new TableData<NotificationResponseDTO> { TotalItems = totalItems, Items = pagedData };
+
+        }
+        catch
         {
-            if (string.IsNullOrWhiteSpace(searchString))
-                return true;
-            if (element.Content.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            if (element.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-
-            return false;
-        }).ToArray();
-
-        totalItems = data.Count();
-        totalUnreadItems = data.Count(x => !x.ReadStatus);
-        enableMarkAllAsReadBtn = totalUnreadItems > 0;
-
-        switch (state.SortLabel)
-        {
-            case "nr_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Title);
-                break;
-            case "sign_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Content);
-                break;
-            case "name_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.AddedDate);
-                break;
+            NavigationManager.NavigateTo("/Server-Error");
+            throw new Exception("Server Error");
         }
 
-        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
-        return new TableData<NotificationResponseDTO> { TotalItems = totalItems, Items = pagedData };
+
     }
 
     private async Task OnSearch(string text)
