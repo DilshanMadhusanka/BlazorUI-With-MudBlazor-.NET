@@ -76,6 +76,7 @@
         {
             NavigationManager.NavigateTo("/");
         }
+        await  store.RemoveItemAsync("Email");
         await base.OnInitializedAsync();
     }
 
@@ -110,11 +111,13 @@
         requestDTO.UserName = model.Email;
         requestDTO.Password = model.Password;
         var response = await jwtAuthenticationService.LoginAsync(requestDTO);
+        await store.SetItemAsync("Email", model.Email);
 
         snackbar.Clear();
         snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
         if (response.JwtToken != null || response.RefreshToken!=null)
         {
+
             snackbar.Add(response.Message, MudBlazor.Severity.Success);
             NavigationManager.NavigateTo("/#");
             (authenticationStateProvider as CustomAuthenticationStateProvider)?.UpdateAuthenticationState();
@@ -139,7 +142,6 @@
 
         }
 
-        await store.SetItemAsync("Email", model.Email);
 
        
 

@@ -1,0 +1,94 @@
+﻿@using MudBlazor
+@using System.ComponentModel.DataAnnotations
+@using MudBlazorUI.Core.DTOs.Request
+@using MudBlazorUI.Core.DTOs.Response
+@using Newtonsoft.Json
+@attribute [Authorize]
+
+<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid Justify="Justify.Center" Class="mt-n10 pa-20">
+        <MudItem Class="mx-auto">
+            <MudCard Style="border-radius: 10px; width: 100%; max-width: 500px; mx-auto; width:350px" Elevation="0">
+                <MudCardContent Class="pa-20">
+                    <MudText Align="Align.Center" Style="@($"color:{Colors.Blue.Darken4}; padding-top: 10px; ")" Typo="Typo.h4">
+                        <span style="font-weight: bold; font-family: 'Inter'; font-size: 22px; ">Enter Password</span>
+                    </MudText>
+                    <div class="mt-6">
+                        <MudText Style="@($"color:{Colors.Shades.Black}; font-size: 13px; padding-left: 5px; ")" Typo="Typo.body1">Password</MudText>
+                        <MudTextField Style="@($"height: 40px; width: 100%; color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; border-radius: 15px; font-size: 13px; margin-top: 10px;")" Class="mt-2" Variant="Variant.Outlined" @bind-Value="model.Password" For="@(() => model.Password)" LabelCentered="true" InputType="InputType.Password" />
+                    </div>
+                </MudCardContent>
+                <MudCardActions Style="@($"padding: 2px 10px 10px 10px;")">
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" Style="@($"width: 100%; height: 40px; border-radius: 7px; display: flex; justify-content: center; margin: auto; margin-bottom: 20px; margin-top: -10px;")">
+                        @if (User.TwoFactorEnabled)
+                        {
+                            <span style="font-family: 'Inter'; font-size: 12px;">Disable TFA</span>
+                        }
+                        else
+                        {
+                            <span style="font-family: 'Inter'; font-size: 12px;">Enable TFA</span>
+                        }
+                    </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+@code {
+    [Parameter]
+    public UserModelResponseDTO User { get; set; }
+
+    RegisterAccountForm model = new RegisterAccountForm();
+    bool success;
+
+    public class RegisterAccountForm
+    {
+        [Required]
+        [StringLength(30, ErrorMessage = "Password must be at least 8 characters long.", MinimumLength = 8)]
+        public string Password { get; set; } = string.Empty;
+    }
+
+    private async Task OnValidSubmit()
+    {
+        await Submit();
+    }
+
+    private async Task Submit()
+    {
+        snackbar.Clear();
+        snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+
+        if (string.IsNullOrEmpty(model.Password))
+        {
+            snackbar.Add("Password is required", Severity.Error);
+            return;
+        }
+
+        TFAEnableRequestDTO tFAEnableRequestDTO = new TFAEnableRequestDTO
+            {
+                Password = model.Password,
+                IsEnable = !User.TwoFactorEnabled,
+            };
+
+        var result = await accountService.Enable2FA(tFAEnableRequestDTO);
+        var responseMessage = await result.Content.ReadAsStringAsync();
+
+        if (result.IsSuccessStatusCode)
+        {
+            User.TwoFactorEnabled = !User.TwoFactorEnabled;
+
+            await userProfile.SetUserProfile(User);
+            model.Password = "";
+            snackbar.Add(responseMessage, Severity.Success);
+        }
+        else
+        {
+            snackbar.Add(responseMessage, Severity.Error);
+        }
+
+        StateHasChanged();
+        await Task.Delay(2000);
+    }
+}

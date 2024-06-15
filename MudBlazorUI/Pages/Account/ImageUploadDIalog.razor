@@ -1,0 +1,83 @@
+﻿@page "/upload-image"
+@using MudBlazor
+@using System.ComponentModel.DataAnnotations
+@using MudBlazorUI.Auth_Service.DTOs.Request
+@using MudBlazorUI.Core.DTOs.Request
+@using MudBlazorUI.Core.DTOs.Response
+@using Newtonsoft.Json
+@inject ISnackbar Snackbar
+@inject AccountService AccountService
+
+@attribute [Authorize]
+
+<MudGrid Justify="Justify.Center" Class="mt-n10 pa-20">
+    <MudItem Class="mx-auto">
+        <MudCard Style="border-radius: 10px; width: 100%; max-width: 500px; mx-auto; width:350px" Elevation="0">
+            <MudCardContent Class="pa-20">
+
+                <MudFileUpload T="IBrowserFile" Style="width:100%;margin-top:30px" Accept=".png, .jpg" @bind-Value="selectedFile">
+                    <ButtonTemplate>
+                        <MudButton Style="width:100%" HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" for="@context.Id">
+                            Select Image
+                        </MudButton>
+                    </ButtonTemplate>
+                    <SelectedTemplate>
+                        @if (context != null)
+                        {
+                            <MudText>@context.Name</MudText>
+                        }
+                        else
+                        {
+                            <MudText>No File</MudText>
+                        }
+                    </SelectedTemplate>
+                </MudFileUpload>
+
+            </MudCardContent>
+            <MudCardActions Style="padding: 2px 10px 10px 10px;">
+                <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" Style="width: 100%; height: 40px; border-radius: 7px; display: flex; justify-content: center; margin: auto; margin-bottom: 20px; margin-top: -10px;" @onclick="Submit">
+                    <span style="font-family: 'Inter'; font-size: 12px;">Upload</span>
+                </MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public UserModelResponseDTO User { get; set; }
+
+    private IBrowserFile selectedFile;
+
+    private async Task Submit()
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+
+        if (selectedFile == null)
+        {
+            Snackbar.Add("Please select a file to upload.", Severity.Error);
+            return;
+        }
+
+        var content = new ImageUploadRequestDTO
+        {
+          UserId=User.Id,
+          File=selectedFile
+        };
+
+        var response = await AccountService.UploadProfileImage(content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Image uploaded successfully.", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("Failed to upload image.", Severity.Error);
+        }
+
+        StateHasChanged();
+        await Task.Delay(2000);
+    }
+}

@@ -1,4 +1,5 @@
-﻿using MudBlazorUI.Core.DTOs.Request;
+﻿using MudBlazorUI.Auth_Service.DTOs.Request;
+using MudBlazorUI.Core.DTOs.Request;
 using MudBlazorUI.Core.DTOs.Response;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
@@ -67,7 +68,42 @@ namespace MudBlazorUI.Auth.Services
                 return result;
 
            
+        } 
+        
+        public async Task<HttpResponseMessage> Enable2FA(TFAEnableRequestDTO tFAEnableRequestDTO)
+        {
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Account/Enable-2FA", tFAEnableRequestDTO);
+             
+                return result;
+           
         }
+        
+        public async Task<string?> GetProfileImage(string fileName)
+        {
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Image/image", fileName);
+            if (result.IsSuccessStatusCode)
+            {
+
+                var imageBytes = await result.Content.ReadAsByteArrayAsync();
+                var base64Image = Convert.ToBase64String(imageBytes);
+                return $"data:image/{Path.GetExtension(fileName).TrimStart('.')};base64,{base64Image}";
+            }
+            else return null;
+
+
+        }   
+        public async Task<HttpResponseMessage> UploadProfileImage(ImageUploadRequestDTO imageUploadRequestDTO)
+        {
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Image/image", imageUploadRequestDTO);
+           
+            return result;
+
+
+        }
+
+
+
+
 
     }
 }

@@ -1,0 +1,326 @@
+﻿@page "/profile"
+
+
+@using System.ComponentModel.DataAnnotations
+@using FluentValidation
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazorUI.Core.DTOs.Response
+@using System.Security.Claims
+
+@attribute [Authorize]
+
+
+
+
+<div style="display:flex;align-items:center;justify-content:center;margin-top:80px">
+    
+
+  
+
+    <MudContainer MaxWidth="MaxWidth.Medium">
+        <MudCard>
+            <MudCardHeader>
+                <MudText Typo="Typo.h5">Your Profile</MudText>
+            </MudCardHeader>
+
+            <MudDivider />
+
+            <MudCardContent >
+                <MudGrid>
+                    <MudItem xs="4" Class=" d-flex align-center  mud-width-full ">
+                        <MudText  Typo="Typo.body1">Profile picture</MudText>
+                    </MudItem> 
+                    <MudItem Class="d-flex align-center  mud-width-full " xs="6" AlignItems="Center">
+                        <MudText Typo="Typo.body1">Profile picture</MudText>
+                    </MudItem>
+                    <MudItem xs="2" Style="margin-left:-20px" Class=" mud-width-full ">
+                       <MudTooltip Text="Change">
+                            <MudIconButton OnClick="OpenImageUplaodDialog">
+                                <MudAvatar Style="height:60px; width:60px;">
+                                    <img src="@ImageUrl" alt="Image" style="height:60px; width:60px;object-fit: cover; border-radius: 50%;" />
+                                </MudAvatar>
+                            </MudIconButton>
+                       </MudTooltip>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+
+            <MudDivider />
+            <MudCardContent Style="padding: 0px 18px;">
+                <MudGrid>
+                    <MudItem xs="4" Class=" d-flex align-center  mud-width-full ">
+                        <MudText Typo="Typo.body1">Email</MudText>
+                    </MudItem>
+                    <MudItem xs="6" AlignItems="Center" Class=" d-flex align-center  mud-width-full ">
+                        <MudText Typo="Typo.body1">@model.Email</MudText>
+                    </MudItem>
+                    <MudItem xs="2" Class=" d-flex align-center  mud-width-full  ">
+                        <MudIconButton Disabled Icon="@Icons.Material.Outlined.Lock" ></MudIconButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+
+
+            <MudDivider />
+            <MudCardContent Style="padding: 0px 18px;">
+                <MudGrid>
+                    <MudItem xs="4" Class=" d-flex align-center  mud-width-full ">
+                        <MudText Typo="Typo.body1">Email Confirmed</MudText>
+                    </MudItem>
+                    <MudItem xs="6" AlignItems="Center" Class=" d-flex align-center  mud-width-full ">
+                        <MudText Typo="Typo.body1">@model.EmailConfirmed</MudText>
+                    </MudItem>
+                    <MudItem xs="2" Class=" d-flex align-center  mud-width-full  ">
+                        <MudIconButton Disabled Icon="@Icons.Material.Outlined.Lock" ></MudIconButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+
+          <MudDivider />
+            <MudCardContent Style="padding: 0px 18px;">
+                <MudGrid>
+                    <MudItem xs="4" Class=" d-flex align-center  mud-width-full ">
+                        <MudText Typo="Typo.body1">Created Date</MudText>
+                    </MudItem>
+                    <MudItem xs="6" AlignItems="Center" Class=" d-flex align-center  mud-width-full ">
+                        <MudText Typo="Typo.body1">@model.AddedDate</MudText>
+                    </MudItem>
+                    <MudItem xs="2" Class=" d-flex align-center  mud-width-full  ">
+                        <MudIconButton Disabled Icon="@Icons.Material.Outlined.Lock" ></MudIconButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+
+          <MudDivider />
+            <MudCardContent Style="padding: 0px 18px;">
+                <MudGrid>
+                    <MudItem xs="4" Class=" d-flex align-center  mud-width-full ">
+                        <MudText Typo="Typo.body1">Last Updated</MudText>
+                    </MudItem>
+                    <MudItem xs="6" AlignItems="Center" Class=" d-flex align-center  mud-width-full ">
+                        <MudText Typo="Typo.body1">@model.UpdateDate</MudText>
+                    </MudItem>
+                    <MudItem xs="2" Class=" d-flex align-center  mud-width-full  ">
+                        <MudIconButton Disabled Icon="@Icons.Material.Outlined.Lock" ></MudIconButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+
+             <MudDivider />
+            <MudCardContent Style="padding: 0px 18px;">
+                <MudGrid>
+                    <MudItem xs="4" Class=" d-flex align-center  mud-width-full ">
+                        <MudText Typo="Typo.body1">Change Password</MudText>
+                    </MudItem>
+                    <MudItem xs="6" AlignItems="Center" Class=" d-flex align-center  mud-width-full ">
+                        <MudText Typo="Typo.body1">***********</MudText>
+                    </MudItem>
+                    <MudItem xs="2" Class=" d-flex align-center  mud-width-full  ">
+                        <MudIconButton Icon="@Icons.Material.Outlined.ArrowForwardIos" OnClick="OpenPrevilageDetailsDialog"></MudIconButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+
+          <MudDivider />
+            <MudCardContent Style="padding: 0px 18px;">
+                <MudGrid>
+                    <MudItem xs="4" Class=" d-flex align-center  mud-width-full ">
+                        <MudText Typo="Typo.body1">Two Factor Enabled</MudText>
+                    </MudItem>
+                    <MudItem xs="6" AlignItems="Center" Class=" d-flex align-center  mud-width-full ">
+                       
+                            @if (model.TwoFactorEnabled)
+                            {
+                                 <MudText Typo="Typo.body1"> On</MudText>
+                            }
+                            else
+                            {
+                            <MudText Typo="Typo.body1"> Off</MudText>
+
+                            }
+                    </MudItem>
+                    <MudItem xs="2" Class=" d-flex align-center  mud-width-full  ">
+                        <MudIconButton Icon="@Icons.Material.Outlined.ArrowForwardIos" OnClick="OpenTFAEnabledDialog"></MudIconButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+
+        
+            
+        </MudCard>
+    </MudContainer>
+
+
+ 
+
+</div>
+
+
+
+
+<MudDialog @bind-IsVisible="changePasswordDialog" Options="dialogOptions">
+    <DialogContent>
+        <div class="d-flex justify-content-center align-items-center" style="display: flex; justify-content: center; align-items: center; height: 100%;">
+           <ChangePasswordDialog></ChangePasswordDialog>
+        </div>
+
+        <div class="d-flex justify-content-end" style="display: flex; justify-content: end;">
+            <MudButton OnClick="CloseChangePasswordDialog" Color="Color.Primary">Close</MudButton>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+
+<MudDialog @bind-IsVisible="tFAEnabledDialog" Options="dialogOptions">
+    <DialogContent>
+        <div class="d-flex justify-content-center align-items-center" style="display: flex; justify-content: center; align-items: center; height: 100%;">
+            <TFAEnableDIalog User="@model"></TFAEnableDIalog>
+        </div>
+
+        <div class="d-flex justify-content-end" style="display: flex; justify-content: end;">
+            <MudButton OnClick="CloseTFAEnabledDialog" Color="Color.Primary">Close</MudButton>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+
+<MudDialog @bind-IsVisible="imageUplaodDialog" Options="dialogOptions">
+    <DialogContent>
+        <div class="d-flex justify-content-center align-items-center" style="display: flex; justify-content: center; align-items: center; height: 100%;">
+            <ImageUploadDIalog ></ImageUploadDIalog>
+        </div>
+
+        <div class="d-flex justify-content-end" style="display: flex; justify-content: end;">
+            <MudButton OnClick="CloseImageUploadDialog" Color="Color.Primary">Close</MudButton>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+
+
+
+
+@code {
+
+
+
+    private bool _processing { get; set; } = false;
+
+    MudForm form;
+
+    UserModelResponseDTO ? model = new UserModelResponseDTO();
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
+    private string ImageUrl { get; set; } = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACUCAMAAAA9M+IXAAAAMFBMVEXk5ueutLfr7O3n6eqrsbTc3+Cxt7rh4+TV2NqnrrHIzM7Lz9G4vcC/xMbDyMrO0tNHfP24AAAEMUlEQVR4nO2cW5LjIAwAbcTTBnP/2y5+JOvMOAkgLNha+mfy2aWSBQIxw9DpdDqdTqfT6XQ6nU4HATAGSuiAGMLP2jofARDeyXGHj9J5Ba0ag9DLaPh4hhs56aFBY6Zmy19dD2Nu5+aE2SSvXA/hcW4pi2HQl4H9i5HtpAQo91l2C/Gi2vBl+n0enH2taMJ3ipHdUljXVg0skbYBM9eOLyTYhgBX9k2zXX2r2sbm7ROj68UXdKptiG+1+gAqWXatZ9Xqr00PbvB1dWTTE/fwrZO+OamwU0OXZaXCFl5H7wvCZEdX0lcHsNm2YXdGbqvzbdfwUvsmrr6vmIk4G4T8LvUpvMS6GcvvS3hpswGyq9iBY6S+SFvipQJRdHdIGyGGqgsblLWB4erCSLwQA9Z23fbS6Qq0LuXChluBD126XS94vO5IqDvhbQl7itTThUtdT2Xbdf8BXcLcRduS6s4FdCnrLj4ZCOvuUGJVI2ze8w9wnljC9oehbbmlsx0Y4kzk0F0o97sz+lsjvaVA92ojaeeObickaeOOXYY58anTv3WKMyhUbeDUZ2S5FxOHLvXtMKCOICm79sPXIYJLfby7gribIA/uOn2T62voduYnVNSQyG847RLxIPdwhJPfoxy+WUtbtZEGGHLSgXKj+8M3Y2PGK1SFp29y01bTNpDaE1eezQKfkg+VRhnOJGwlTQNzeqAjrwQ5Za/+HlA2JiHMUvcrOzF/mYfdBiDrJ8IDUG78JMzl0sz47gow7d5GmI+uodDuwCCcuchhbswkmgrtAwbaSRnSlO/Zuv6VIbAtum4AG7RfnN1wbvF6aGlG/gIIwVQioNT2u3Hgldo6l+wR1X6eQiLIR96OISGWyesQ6qEZ8ZCc2q+aoQgcmqfFIWC4DNqzVlClRzsBDMRst2rwbVHjUtpFQ7Uvb00Ab7lJ2fAaIyehKlThsCrM7uf7qRg4D0EmHpBmEFLg67bmrfFoF0GWFQBiyVZ9KluaNgiUthk58Bsj59ubCwB//Yguh7CtVHfWNgCdn7HXTDeWCRHV5STBR3+PcPjAPnYM2cL2jr175CO6HN/Rla5qkd1urnDhqxXwd4X2IVzwJSawAmNu33yLvVwKiXBvaHffQtMucNs39oMiLzFB31K+rihw3VZi9jXeFztCUmQEKx6DG/HOeUyJ88XElzQTdhD5i7tVz/XNrw8U9fa3b2b9ZRH/xuAWsta3ArNieWQN8EGBtxG5vjmfW61UWEm/Ikq63isMt6kdJ1S0TZ8nKfDCC4VMi22972wnbbEo8dIAR9KkWY3V95WkVyC028ZL3YS1AvN+vRQJM6j42Wc8fImtvbjp0VJEz8zi36mWIHo6TrUQ3OiXxBVanitiXxKXeN5VgsiVAmpuHU/ETho1UHU34po20YhuZI8pJG+C2CM+1gitzBT8N/wBcX44zAWEsQEAAAAASUVORK5CYII=";
+
+    //change password dialog
+    private bool changePasswordDialog = false;
+    private bool tFAEnabledDialog = false;
+    private bool imageUplaodDialog = false;
+
+    void CloseChangePasswordDialog()
+    {
+        changePasswordDialog = false;
+
+    } 
+    void CloseImageUploadDialog()
+    {
+        imageUplaodDialog = false;
+
+    } 
+    void CloseTFAEnabledDialog()
+    {
+        tFAEnabledDialog = false;
+
+    }
+    private DialogOptions dialogOptions = new() { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true, CloseButton = true };
+
+
+    private void OpenPrevilageDetailsDialog( )
+    {
+        changePasswordDialog = true;
+
+
+    }
+    private void OpenImageUplaodDialog( )
+    {
+        imageUplaodDialog = true;
+
+
+    }
+    private void OpenTFAEnabledDialog()
+    {
+        tFAEnabledDialog = true;
+
+
+    }
+
+    async Task GetUserDetailsFromDataBase()
+    {
+        var respones = await accountService.GetUserDetaiils();
+
+        if (respones != null)
+        {
+            model = respones;
+            await userProfile.SetUserProfile(model);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/Server-Error");
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        model= await userProfile.GetUserProfile();
+        var user = (await AuthenticationState).User;
+        var id = user?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+        if (model == null || model.Id != id)
+        {
+            Console.WriteLine($"model id  no {id}");
+            await GetUserDetailsFromDataBase();
+
+        }
+
+
+        var result = await accountService.GetProfileImage(model.ImageName);
+        if (!string.IsNullOrEmpty(result))
+        {
+            ImageUrl = result;
+        }
+
+
+      
+    }
+
+
+
+    private async Task Submit()
+    {  _processing = true;
+
+        try
+        {
+            await form.Validate();
+
+            if (form.IsValid)
+            {
+              
+                
+              
+                _processing = false;
+                NavigationManager.NavigateTo("/");
+            }
+        }
+        catch
+        {
+
+        }
+        _processing = false;
+    }
+
+
+   
+	
+}
