@@ -31,7 +31,7 @@
                         <MudText  Typo="Typo.body1">Profile picture</MudText>
                     </MudItem> 
                     <MudItem Class="d-flex align-center  mud-width-full " xs="6" AlignItems="Center">
-                        <MudText Typo="Typo.body1">Profile picture</MudText>
+                        <MudText Typo="Typo.body1">Change Your Picture </MudText>
                     </MudItem>
                     <MudItem xs="2" Style="margin-left:-20px" Class=" mud-width-full ">
                        <MudTooltip Text="Change">
@@ -187,7 +187,7 @@
 <MudDialog @bind-IsVisible="imageUplaodDialog" Options="dialogOptions">
     <DialogContent>
         <div class="d-flex justify-content-center align-items-center" style="display: flex; justify-content: center; align-items: center; height: 100%;">
-            <ImageUploadDIalog ></ImageUploadDIalog>
+            <ImageUploadDIalog User="model" ></ImageUploadDIalog>
         </div>
 
         <div class="d-flex justify-content-end" style="display: flex; justify-content: end;">
@@ -224,8 +224,10 @@
         changePasswordDialog = false;
 
     } 
-    void CloseImageUploadDialog()
+    async Task  CloseImageUploadDialog()
     {
+        await FetchDetails();
+
         imageUplaodDialog = false;
 
     } 
@@ -271,9 +273,9 @@
         }
     }
 
-    protected override async Task OnInitializedAsync()
+    async Task FetchDetails()
     {
-        model= await userProfile.GetUserProfile();
+        model = await userProfile.GetUserProfile();
         var user = (await AuthenticationState).User;
         var id = user?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
@@ -290,7 +292,12 @@
         {
             ImageUrl = result;
         }
+    }
 
+    protected override async Task OnInitializedAsync()
+    {
+
+        await FetchDetails();
 
       
     }

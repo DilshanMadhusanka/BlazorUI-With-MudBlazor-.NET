@@ -13,6 +13,6 @@ namespace MudBlazorUI.Auth.Services
         public Task<HttpResponseMessage> ChangePassword(ChangePasswordRequestDTO changePassword);
         public Task<HttpResponseMessage> Enable2FA(TFAEnableRequestDTO tFAEnableRequestDTO);
         public Task<string?> GetProfileImage(string fileName);
-        public Task<HttpResponseMessage> UploadProfileImage(ImageUploadRequestDTO imageUploadRequestDTO);
+        public Task<HttpResponseMessage> UploadProfileImage(MultipartFormDataContent content);
     }
 }

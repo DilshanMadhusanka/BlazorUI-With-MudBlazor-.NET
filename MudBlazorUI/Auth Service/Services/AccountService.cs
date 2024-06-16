@@ -92,9 +92,11 @@ namespace MudBlazorUI.Auth.Services
 
 
         }   
-        public async Task<HttpResponseMessage> UploadProfileImage(ImageUploadRequestDTO imageUploadRequestDTO)
+        public async Task<HttpResponseMessage> UploadProfileImage(MultipartFormDataContent content )
         {
-            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Image/image", imageUploadRequestDTO);
+
+              
+            var result = await _factory.CreateClient("ServerApi").PostAsync("ApiGateWay/Auth-api/Image/upload-image", content);
            
             return result;
 
