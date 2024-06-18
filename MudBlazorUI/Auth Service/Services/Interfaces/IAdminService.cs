@@ -13,5 +13,6 @@ namespace MudBlazorUI.Auth_Service.Services
         public Task<IEnumerable<UserLoginDeviceInfoResponse>?> GetAllLoginDetails(string searchString);
         public  Task<HttpResponseMessage> GetUserRole(string id);
         public Task<HttpResponseMessage> UpdateRole(AssignRoleRequestDTO assignRoleRequestDTO);
+        public Task<HttpResponseMessage> CreateUser(AuthenticationRequestDTO authenticationRequestDTO);
     }
 }

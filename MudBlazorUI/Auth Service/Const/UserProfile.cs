@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 using System;
 using System.Threading.Tasks;
+using MudBlazorUI.Core.DTOs.Request;
 
 namespace MudBlazorUI.Auth.Const
 {
@@ -14,6 +15,7 @@ namespace MudBlazorUI.Auth.Const
 
         private const string THEME = nameof(THEME);
         private const string USERPROFILE = nameof(USERPROFILE);
+        private const string R3M3M4M3 = nameof(R3M3M4M3);
 
         public UserProfile(ILocalStorageService localStorageService)
         {
@@ -29,6 +31,34 @@ namespace MudBlazorUI.Auth.Const
         {
             return await _localStorageService.GetItemAsStringAsync(THEME);
         }
+
+
+        public async Task SetUserProfile(UserModelResponseDTO userModelResponseDTO)
+        {
+            await SetSecureItem(USERPROFILE, userModelResponseDTO);
+        }
+
+        public async Task<UserModelResponseDTO?> GetUserProfile()
+        {
+            return await GetSecureItemAsync<UserModelResponseDTO>(USERPROFILE);
+        }
+
+        public async Task SetRememberMe(AuthenticationRequestDTO authenticationRequestDTO)
+        {
+
+            await SetSecureItem(R3M3M4M3, authenticationRequestDTO);
+        }
+
+        public async Task<AuthenticationRequestDTO?> GetRememberMe()
+        {
+            return await GetSecureItemAsync<AuthenticationRequestDTO>(R3M3M4M3);
+        }
+
+
+
+
+
+
 
         public async Task SetSecureItem<T>(string key, T value)
         {
@@ -57,14 +87,6 @@ namespace MudBlazorUI.Auth.Const
             }
         }
 
-        public async Task SetUserProfile(UserModelResponseDTO userModelResponseDTO)
-        {
-            await SetSecureItem(USERPROFILE, userModelResponseDTO);
-        }
-
-        public async Task<UserModelResponseDTO?> GetUserProfile()
-        {
-            return await GetSecureItemAsync<UserModelResponseDTO>(USERPROFILE);
-        }
+      
     }
 }

@@ -1,0 +1,193 @@
+﻿@page "/database"
+@using MudBlazorUI.Auth_Service.Services
+@inject IDatabaseService DatabaseService
+@inject ISnackbar Snackbar
+
+<MudGrid Justify="Justify.Center" Class="mt-n10 pa-20">
+    <MudItem Class="mx-auto">
+        <MudCard Style="border-radius: 10px; width: 100%; max-width: 500px; mx-auto;" Elevation="0">
+            <MudCardContent Class="pa-20">
+                <MudText Typo="Typo.h6">Backup and Restore Databases</MudText>
+                <MudDivider Class="my-4" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="BackupSqlServer">
+                    Backup SQL Server
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="BackupPostgreSql" Class="ml-2">
+                    Backup PostgreSQL
+                </MudButton>
+                <MudDivider Class="my-4" />
+                <MudTextField @bind-Value="sqlServerBackupFileName" Placeholder="SQL Server Backup Filename" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => DownloadSqlServerBackup(sqlServerBackupFileName)">
+                    Download SQL Server Backup
+                </MudButton>
+                <MudTextField @bind-Value="postgreSqlBackupFileName" Placeholder="PostgreSQL Backup Filename" Class="mt-2" />
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => DownloadPostgreSqlBackup(postgreSqlBackupFileName)" Class="ml-2">
+                    Download PostgreSQL Backup
+                </MudButton>
+                <MudDivider Class="my-4" />
+                <InputFile OnChange="HandleSqlServerUpload" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UploadSqlServerBackup" Disabled="@(sqlServerFile == null)">
+                    Upload SQL Server Backup
+                </MudButton>
+                <InputFile OnChange="HandlePostgreSqlUpload" Class="mt-2" />
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="UploadPostgreSqlBackup" Disabled="@(postgreSqlFile == null)">
+                    Upload PostgreSQL Backup
+                </MudButton>
+                <MudDivider Class="my-4" />
+                <InputFile OnChange="HandleSqlServerRestore" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RestoreSqlServerBackup" Disabled="@(sqlServerRestoreFile == null)">
+                    Restore SQL Server Backup
+                </MudButton>
+                <InputFile OnChange="HandlePostgreSqlRestore" Class="mt-2" />
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="RestorePostgreSqlBackup" Disabled="@(postgreSqlRestoreFile == null)">
+                    Restore PostgreSQL Backup
+                </MudButton>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string sqlServerBackupFileName;
+    private string postgreSqlBackupFileName;
+    private IBrowserFile sqlServerFile;
+    private IBrowserFile postgreSqlFile;
+    private IBrowserFile sqlServerRestoreFile;
+    private IBrowserFile postgreSqlRestoreFile;
+
+    private async Task BackupSqlServer()
+    {
+        try
+        {
+            var backupFilePath = await DatabaseService.BackupSqlServer();
+            Snackbar.Add($"SQL Server backup created: {backupFilePath}", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task BackupPostgreSql()
+    {
+        try
+        {
+            var backupFilePath = await DatabaseService.BackupPostgreSql();
+            Snackbar.Add($"PostgreSQL backup created: {backupFilePath}", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task DownloadSqlServerBackup(string fileName)
+    {
+        try
+        {
+            await DatabaseService.DownloadBackup(fileName);
+            Snackbar.Add("SQL Server backup downloaded successfully.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task DownloadPostgreSqlBackup(string fileName)
+    {
+        try
+        {
+            await DatabaseService.DownloadBackup(fileName);
+            Snackbar.Add("PostgreSQL backup downloaded successfully.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void HandleSqlServerUpload(InputFileChangeEventArgs e)
+    {
+        sqlServerFile = e.File;
+    }
+
+    private void HandlePostgreSqlUpload(InputFileChangeEventArgs e)
+    {
+        postgreSqlFile = e.File;
+    }
+
+    private void HandleSqlServerRestore(InputFileChangeEventArgs e)
+    {
+        sqlServerRestoreFile = e.File;
+    }
+
+    private void HandlePostgreSqlRestore(InputFileChangeEventArgs e)
+    {
+        postgreSqlRestoreFile = e.File;
+    }
+
+    private async Task UploadSqlServerBackup()
+    {
+        try
+        {
+            if (sqlServerFile != null)
+            {
+                await DatabaseService.UploadSqlServerBackup(sqlServerFile);
+                Snackbar.Add("SQL Server backup uploaded successfully.", Severity.Success);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task UploadPostgreSqlBackup()
+    {
+        try
+        {
+            if (postgreSqlFile != null)
+            {
+                await DatabaseService.UploadPostgreSqlBackup(postgreSqlFile);
+                Snackbar.Add("PostgreSQL backup uploaded successfully.", Severity.Success);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task RestoreSqlServerBackup()
+    {
+        try
+        {
+            if (sqlServerRestoreFile != null)
+            {
+                await DatabaseService.RestoreSqlServerBackup(sqlServerRestoreFile);
+                Snackbar.Add("SQL Server backup restored successfully.", Severity.Success);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task RestorePostgreSqlBackup()
+    {
+        try
+        {
+            if (postgreSqlRestoreFile != null)
+            {
+                await DatabaseService.RestorePostgreSqlBackup(postgreSqlRestoreFile);
+                Snackbar.Add("PostgreSQL backup restored successfully.", Severity.Success);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+}

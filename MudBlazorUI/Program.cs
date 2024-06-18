@@ -47,6 +47,7 @@ builder.Services.AddScoped<IUserProfile, UserProfile>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IDatabaseService, DatabaseService>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredSessionStorageAsSingleton();
 builder.Services.AddBlazoredLocalStorageAsSingleton();

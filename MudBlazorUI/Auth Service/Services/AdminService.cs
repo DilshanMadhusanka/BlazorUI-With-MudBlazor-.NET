@@ -92,5 +92,14 @@ namespace MudBlazorUI.Auth_Service.Services
             return result;
 
         }
+
+        public async Task<HttpResponseMessage> CreateUser(AuthenticationRequestDTO authenticationRequestDTO)
+        {
+
+            var result = await _factory.CreateClient("ServerApi").PostAsJsonAsync("ApiGateWay/Auth-api/Account/Create", authenticationRequestDTO);
+
+            return result;
+
+        }
     }
 }
