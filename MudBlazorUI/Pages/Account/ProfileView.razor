@@ -144,6 +144,25 @@
                     </MudItem>
                 </MudGrid>
             </MudCardContent>
+            
+            <MudDivider />
+            <MudCardContent Style="padding: 0px 18px;">
+                <MudGrid>
+                    <MudItem xs="4" Class=" d-flex align-center  mud-width-full ">
+                        <MudText Typo="Typo.body1">LogOut</MudText>
+                    </MudItem>
+                    <MudItem xs="6" AlignItems="Center" Class=" d-flex align-center  mud-width-full ">
+                       
+                            
+                                 <MudText Typo="Typo.body1"> @model!.Email</MudText>
+                            
+                          
+                    </MudItem>
+                    <MudItem xs="2" Class=" d-flex align-center  mud-width-full  ">
+                        <MudIconButton Icon="@Icons.Material.Outlined.Logout" OnClick="logOut"></MudIconButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
 
         
             
@@ -325,6 +344,11 @@
 
         }
         _processing = false;
+    }
+
+    private void logOut()
+    {
+        (authenticationStateProvider as CustomAuthenticationStateProvider)?.NotifyUserLogout();
     }
 
 
