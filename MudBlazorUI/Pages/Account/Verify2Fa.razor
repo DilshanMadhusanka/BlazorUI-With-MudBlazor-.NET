@@ -135,6 +135,8 @@
 @code {
     [CascadingParameter]
     public Task<AuthenticationState> AuthenticationState { get; set; }
+    private string Email { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -145,11 +147,11 @@
         {
             NavigationManager.NavigateTo("/");
         }
+        Email = await store.GetItemAsync<string>("Email");
         await base.OnInitializedAsync();
     }
 
 
-    private string Email = "example@abc.com";
     private string Code1 { get; set; }
     private string Code2 { get; set; }
     private string Code3 { get; set; }
@@ -159,8 +161,7 @@
 
     private async Task Resend()
     {
-        var email = await store.GetItemAsync<string>("Email");
-        var result =await accountService.Resend2FACode(email);
+        var result =await accountService.Resend2FACode(Email);
 
         if (result != null)
         {

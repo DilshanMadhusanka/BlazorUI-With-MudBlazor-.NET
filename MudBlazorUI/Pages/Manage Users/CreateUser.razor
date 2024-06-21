@@ -1,0 +1,108 @@
+﻿@page "/create-user"
+@using FluentValidation
+@using MudBlazor
+@using System.ComponentModel.DataAnnotations
+@using MudBlazorUI.Auth_Service.Services
+@using MudBlazorUI.Core.DTOs.Request
+@using MudBlazorUI.Core.DTOs.Response
+@using Newtonsoft.Json
+@inject IAdminService adminService
+@attribute [Authorize(Roles = "Admin")]
+
+<div style="margin-top:150px;margin-bottom:250px">
+    <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4">
+        <MudPaper Elevation="4" Class="pa-4">
+            <MudText Typo="Typo.h5">Create User</MudText>
+            <MudForm Model="@authenticationRequestDTO" @ref="form" Validation="@(userValidator.ValidateValue)">
+                <MudTextField @bind-Value="authenticationRequestDTO.UserName" Label="User Name(Email)" Placeholder="example@gmail.com" Required="true" For="@(() => authenticationRequestDTO.UserName)" Immediate="true" />
+                @if (useDefaultPassword)
+                {
+                    <MudTextField @bind-Value="@DefaultPassword" Label="Password" InputType="InputType.Password" Required="true" />
+                }
+                else
+                {
+                    <MudTextField @bind-Value="authenticationRequestDTO.Password" Label="Password" InputType="InputType.Password" Required="true" />
+                }
+                <MudSwitch @bind-Checked="@useDefaultPassword" Label="Use Default Password" Color="Color.Primary" />
+
+                <MudButton Disabled="@_processing" Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleSubmit">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Processing</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Submit</MudText>
+                    }
+                </MudButton>
+            </MudForm>
+        </MudPaper>
+    </MudContainer>
+</div>
+
+@code {
+    private MudForm form;
+    private bool _processing = false;
+    private string DefaultPassword { get; set; } = "Abc@1234";
+    private AuthenticationRequestDTO authenticationRequestDTO = new AuthenticationRequestDTO();
+    OrderModelFluentValidator userValidator = new OrderModelFluentValidator();
+    private bool useDefaultPassword = false;
+
+    private async Task HandleSubmit()
+    {
+        _processing = true;
+        await form.Validate();
+        if (form.IsValid)
+        {
+            if (useDefaultPassword)
+            {
+                authenticationRequestDTO.Password = DefaultPassword;
+            }
+            Console.WriteLine(authenticationRequestDTO.Password);
+
+            var result = await adminService.CreateUser(authenticationRequestDTO);
+            var content = await result.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<AuthenticationResponseDTO>(content);
+
+            snackbar.Clear();
+            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+            if (result.IsSuccessStatusCode)
+            {
+                snackbar.Add(response.Message, MudBlazor.Severity.Success);
+            }
+            else
+            {
+                snackbar.Add(response.Message, MudBlazor.Severity.Error);
+            }
+        }
+        _processing = false;
+    }
+
+    public class OrderModelFluentValidator : AbstractValidator<AuthenticationRequestDTO>
+    {
+        public OrderModelFluentValidator()
+        {
+            RuleFor(x => x.UserName)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .EmailAddress()
+                .MustAsync(async (value, cancellationToken) => await IsUniqueAsync(value));
+        }
+
+        private async Task<bool> IsUniqueAsync(string email)
+        {
+            // Simulates a long running http call
+            await Task.Delay(2000);
+            return email.ToLower() != "test@test.com";
+        }
+
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+        {
+            var result = await ValidateAsync(ValidationContext<AuthenticationRequestDTO>.CreateWithOptions((AuthenticationRequestDTO)model, x => x.IncludeProperties(propertyName)));
+            if (result.IsValid)
+                return Array.Empty<string>();
+            return result.Errors.Select(e => e.ErrorMessage);
+        };
+    }
+}

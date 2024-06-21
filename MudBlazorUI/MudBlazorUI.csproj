@@ -13,6 +13,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="8.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.6" />
     <PackageReference Include="MudBlazor" Version="6.19.1" />
     <PackageReference Include="Syncfusion.Blazor.Navigations" Version="25.1.40" />
 	  <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
@@ -38,6 +41,9 @@
 
   <ItemGroup>
     <Content Update="Pages\Account\EmailConfrimSuccess.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+    <Content Update="Pages\Account\ProfileView.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
     <Content Update="Pages\Manage Users\EditUser.razor">

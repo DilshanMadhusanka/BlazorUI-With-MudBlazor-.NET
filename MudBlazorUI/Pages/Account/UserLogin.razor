@@ -6,9 +6,6 @@
 @using MudBlazorUI.Auth.Services
 @using MudBlazorUI.Core.DTOs.Request
 
-
-
-
 <div class="page">
     <MudLayout>
         <div style="background-image: url('Assets/background-login.png'); background-size: cover; background-position: center; height: 430px; width: 100%; position: relative;">
@@ -40,11 +37,19 @@
                                     <MudTextField Style="@($"height: 40px; width: 100%; color: {Colors.Grey.Lighten1}; background-color: {Colors.Shades.White}; border-radius: 15px; font-size: 13px; margin-top: 10px;")" Class="mt-2" Variant="Variant.Outlined" @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password" />
                                 </div>
                                 <MudLink Style="@($"padding-top: 10px; font-size: 13px; padding-left: 5px;")" Href="/forgotpassword" Underline="Underline.None">Forgotten your username or password?</MudLink>
-                                <MudCheckBox Style="@($"font-size: 12px; padding-left: 5px;")" @bind-Value="Basic_CheckBox4" Label="Remember Username" LabelTypography="Typo.h6" Class="mt-4" />
+                                <MudCheckBox Style="@($"font-size: 12px; padding-left: 5px;")" @bind-Value="RememberMe" Label="Remember Username" LabelTypography="Typo.h6" Class="mt-4" />
                             </MudCardContent>
                             <MudCardActions Style="@($"padding: 2px 10px 10px 10px;")">
-                                <MudButton @onclick="GoToHomePage" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" Style="@($"width: 100%; height: 40px; border-radius: 7px; display: flex; justify-content: center; margin: auto; margin-bottom: 20px; margin-top: -10px;")">
-                                    <span style="font-family: 'Inter'; font-size: 12px;">Sign In</span>
+                                <MudButton Disabled="@_processing" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" Style="@($"width: 100%; height: 40px; border-radius: 7px; display: flex; justify-content: center; margin: auto; margin-bottom: 20px; margin-top: -10px;")">
+                                    @if (_processing)
+                                    {
+                                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                        <MudText Class="ms-2">Signing In</MudText>
+                                    }
+                                    else
+                                    {
+                                        <span style="font-family: 'Inter'; font-size: 12px;">Sign In</span>
+                                    }
                                 </MudButton>
                             </MudCardActions>
                         </MudCard>
@@ -57,26 +62,30 @@
 
 @code {
     [CascadingParameter]
-    public Task<AuthenticationState> AuthenticationState{ get; set; }
+    public Task<AuthenticationState> AuthenticationState { get; set; }
 
-    RegisterAccountForm model = new RegisterAccountForm();
-    bool success;
-
-
-
-    public bool Basic_CheckBox4 { get; set; } = true;
-
-    string message;
+    private RegisterAccountForm model = new RegisterAccountForm();
+    private bool success;
+    private bool _processing = false;
+    public bool RememberMe { get; set; } = true;
+    private string message;
 
     protected override async Task OnInitializedAsync()
     {
-
         var user = (await AuthenticationState).User;
         if (user.Identity.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/");
         }
+        await store.RemoveItemAsync("Email");
         await base.OnInitializedAsync();
+
+        var res = await userProfile.GetRememberMe();
+        if (res != null)
+        {
+            model.Email = res.UserName;
+            model.Password = res.Password;
+        }
     }
 
     public class RegisterAccountForm
@@ -90,45 +99,44 @@
         public string Password { get; set; }
     }
 
-
-
-    private void OnValidSubmit(EditContext context)
+    private async void OnValidSubmit(EditContext context)
     {
+        _processing = true;
+
         success = true;
-        StateHasChanged();
-    }
-
-
-
-
-    private async void GoToHomePage()
-    {
-
-
-
-        AuthenticationRequestDTO requestDTO = new AuthenticationRequestDTO();
-        requestDTO.UserName = model.Email;
-        requestDTO.Password = model.Password;
+        AuthenticationRequestDTO requestDTO = new AuthenticationRequestDTO
+            {
+                UserName = model.Email,
+                Password = model.Password
+            };
         var response = await jwtAuthenticationService.LoginAsync(requestDTO);
+        await store.SetItemAsync("Email", model.Email);
 
         snackbar.Clear();
         snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
-        if (response.JwtToken != null || response.RefreshToken!=null)
+        if (response.JwtToken != null || response.RefreshToken != null)
         {
             snackbar.Add(response.Message, MudBlazor.Severity.Success);
+
+            //save the remember me
+            if (RememberMe)
+            {
+                await userProfile.SetRememberMe(requestDTO);
+            }
             NavigationManager.NavigateTo("/#");
             (authenticationStateProvider as CustomAuthenticationStateProvider)?.UpdateAuthenticationState();
-
         }
-        else if(response.IsLocked==true)
+        else if (response.IsLocked == true)
         {
             snackbar.Add(response.Message, MudBlazor.Severity.Error);
             NavigationManager.NavigateTo("/accountrestricted");
-        }else if(response.EmailConfirmed==false)
+        }
+        else if (response.EmailConfirmed == false)
         {
             snackbar.Add(response.Message, MudBlazor.Severity.Error);
             NavigationManager.NavigateTo("/confirm-Email");
-        }else if(response.Is2FAConfirmed==true)
+        }
+        else if (response.Is2FAConfirmed == true)
         {
             snackbar.Add(response.Message, MudBlazor.Severity.Success);
             NavigationManager.NavigateTo("/verifiy2Fa");
@@ -136,13 +144,14 @@
         else
         {
             snackbar.Add(response.Message, MudBlazor.Severity.Error);
-
         }
 
-        await store.SetItemAsync("Email", model.Email);
+        _processing = false;
+        StateHasChanged();
+    }
 
-       
-
+    private async void GoToHomePage()
+    {
         
     }
 }

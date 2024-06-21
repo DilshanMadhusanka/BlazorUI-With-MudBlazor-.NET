@@ -20,6 +20,8 @@ namespace MudBlazorUI.Core.DTOs.Response
         public int AccessFailedCount { get; set; }
         public DateTime AddedDate { get; set; }
         public DateTime UpdateDate { get; set; }
+        public string? ImageName { get; set; }
+
 
 
     }
